@@ -13,7 +13,7 @@ const variationRegexes = [
   // resolutions
   /\d+p|sd(?!\w)|hd(?!\w)|uhd|fullhd|ultrahd|standard|\W\d{1}k|\d+p?x\d+p?|480|720|1080/ig,
   // extras
-  /bts|imageset|images|picset|with picset|\+?pictures|x\d+|uhq/ig,
+  /bts|(hq )*image *set|images|picset|with picset|\+?pictures|x\d+|uhq/ig,
   // framerate
   /\d+(?:\.\d+)?\s?fps/ig,
   // bitrate
