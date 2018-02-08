@@ -6,7 +6,7 @@
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version         3.1
+// @version        5
 // ==/UserScript==
 
 const variationRegexes = [
@@ -21,7 +21,7 @@ const variationRegexes = [
   // filetype
   /mpeg4|3gp|mp4|wmv|h\.?265|hevc|h\.?264/ig,
   // VR
-  /(?:desktop|gear|smartphone|oculus( rift)?|Oculus\/Vive|GearVR\/DayDream|PlayStationVR PS4|playstation|Google Cardboard)(?: ?vr)?/ig,
+  /(?:desktop|gear(?:vr)\/?daydream|smartphone|oculus\/?(?:vive)( rift)?|PlayStationVR PS4|playstation|Google Cardboard)(?: ?vr)?/ig,
     // reported torrents
   / \/ Reported/i
 ];
