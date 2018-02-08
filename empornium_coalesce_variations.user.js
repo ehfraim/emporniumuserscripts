@@ -21,7 +21,7 @@ const variationRegexes = [
   // filetype
   /mpeg4|3gp|mp4|wmv|h\.?265|hevc|h\.?264/ig,
   // VR
-  /(?:desktop|gear|smartphone|oculus( rift)?|PlayStationVR PS4|playstation|Google Cardboard)(?: ?vr)?/ig,
+  /(?:desktop|gear|smartphone|oculus( rift)?|Oculus\/Vive|GearVR\/DayDream|PlayStationVR PS4|playstation|Google Cardboard)(?: ?vr)?/ig,
     // reported torrents
   / \/ Reported/i
 ];
