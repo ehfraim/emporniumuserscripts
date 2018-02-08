@@ -6,7 +6,7 @@
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version         2
+// @version         3
 // ==/UserScript==
 
 const variationRegexes = [
@@ -21,7 +21,9 @@ const variationRegexes = [
   // filetype
   /mpeg4|3gp|mp4|wmv|h\.?265|hevc|h\.?264/ig,
   // VR
-  /(?:desktop|gear|smartphone|oculus( rift)?|PlayStationVR PS4|playstation|Google Cardboard)(?: ?vr)?/ig
+  /(?:desktop|gear|smartphone|oculus( rift)?|PlayStationVR PS4|playstation|Google Cardboard)(?: ?vr)?/ig,
+    // reported torrents
+  / \/ Reported/i
 ];
 
 const soupCache = new Map();
@@ -247,5 +249,5 @@ function isUnique(list) {
   return list.reduce((acc, el) => {
     if (acc.includes(el)) return acc;
     return [el, ...acc];
-  }, []).length === 1
+  }, []).length === 1;
 }
