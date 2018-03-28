@@ -6,7 +6,7 @@
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version        5
+// @version        5.1
 // ==/UserScript==
 
 const variationRegexes = [
