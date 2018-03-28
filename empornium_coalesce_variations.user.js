@@ -19,7 +19,7 @@ const variationRegexes = [
   // bitrate
   /(?:\d+(?:\.\d+)?\s?(?:k|m)bps)|mobile-(?:high|medium|low)|mobile/ig,
   // filetype
-  /mpeg4|3gp|mp4|wmv|h\.?265|hevc|h\.?264/ig,
+  /mpeg4|3gp|mp4|wmv|h\.?265|hvec|h\.?264/ig,
   // VR
   /(?:desktop|gear(?:vr)\/?daydream|smartphone|oculus\/?(?:vive)( rift)?|PlayStationVR PS4|playstation|Google Cardboard)(?: ?vr)?/ig,
     // reported torrents
