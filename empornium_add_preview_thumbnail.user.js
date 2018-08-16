@@ -1,122 +1,143 @@
 // ==UserScript==
 // @name           Empornium add preview thumbnail
+// @description    Lazy loads thumbnails 
 // @namespace      empornium
 // @include        https://www.empornium.tld/*
-// @version        2
+// @version        3
 // @grant          none
 // run-at          document-idle
 // ==/UserScript==
 
-var index = 0;
+var preloadFullSizeImages = true;
+
 document.querySelectorAll('tr.torrent').forEach(torrent => {
-  loadThumbnail(torrent, index++);
+    addPlaceHolder(torrent);
 });
 
-async function loadThumbnail(torrent, index) {
-  var script = torrent.querySelector('script').innerHTML.replace(/\\\//g, '/').replace(/\\"/g,'');
-  // let imgURL = JSON.parse("\"" + script.match(/src=(.*)><\\\/td>/)[1] + "\"").slice(1, -1);
-  let dummy = document.createElement('div');
-  dummy.innerHTML = script.slice(script.indexOf('=') + 3, -1);  // cut out just the html
-  let imgURL = dummy.querySelector('img').src;
-  let thumbURL = imgURL.replace('&gif', '');
-    if (!/(th\.jpg|th\.png)|(freeimage|imgbox)|(\.jpg\.)/.test(imgURL)) {
-      if (/\.md\./i.test(imgURL)) thumbURL = imgURL.replace(".md.", ".th.");
-      else if (/\.jpg/i.test(imgURL)) thumbURL = imgURL.replace(".jpg", ".th.jpg");
-      else if (!/noimage/.test(imgURL)) {
-        thumbURL = thumbURL.replace(/\.md\.png|\.png/i, ".th.png");
-      }
+var lazyImageObserver = new IntersectionObserver((entries, observer) => {
+    for (var entry of entries) {
+        if (entry.isIntersecting) {
+            var lazyImage = entry.target;
+            lazyImage.src = lazyImage.dataset.thumbUrl;
+            if (preloadFullSizeImages) {
+                var preloadImg = new Image();
+                preloadImg.src = lazyImage.dataset.fullImage;
+            }
+            lazyImage.onerror = function () {
+                var previewImgEl = document.getElementById(this.dataset.preview);
+                // previewImgEl.src = 'https://fapping.empornium.sx/images/2017/11/29/Broken-Image.th.png'; // backup
+                previewImgEl.src = 'https://xxx.freeimage.us/thumb.php?id=D9D0_5A1E8C7B';
+                // previewImgEl.style.height = '50px';
+            };
+            lazyImage.classList.remove('lazy-img');
+            lazyImageObserver.unobserve(lazyImage);
+        }
     }
-  var previewImg = new Image();
-  previewImg.id = 'preview' + index;
+}, { rootMargin: "100px" }); //start loading image before it is visable
 
-  var tempImg = new Image();
-  tempImg.dataset.preview = 'preview' + index;
-  tempImg.src = thumbURL;
-  tempImg.onload = function () {
-    var previewImgEl = document.getElementById(this.dataset.preview);
-    previewImgEl.src = this.src;
-    previewImgEl.style.opacity = "1";
-  };
-  tempImg.onerror = function() {
-    var previewImgEl = document.getElementById(this.dataset.preview);
-    // previewImgEl.src = 'https://fapping.empornium.sx/images/2017/11/29/Broken-Image.th.png';
-    previewImgEl.src = 'https://xxx.freeimage.us/thumb.php?id=D9D0_5A1E8C7B';
-    previewImgEl.style.opacity = "1";
-    previewImgEl.style.height = '50px';
-  };
-  previewImg.dataset.fullImage = imgURL.replace(/\.th\.|\.md\./i, '.');
-  previewImg.className = 'preview-thumb';
-  var previewDiv = document.createElement('div');
-  previewDiv.className = 'preview-div';
-  previewDiv.appendChild(previewImg);
-  previewImg.addEventListener('click', showModal, false);
-  var category = torrent.querySelector('.cats_col');
-  category.children[0].style.display = "inline";
-  category.style.whiteSpace = "nowrap";
-  category.appendChild(previewDiv);
+document.querySelectorAll('.preview-thumb').forEach(lazyImage => {
+    lazyImageObserver.observe(lazyImage);
+});
 
-  // preload the full size images
-  var preloadImg = new Image();
-  preloadImg.src = previewImg.dataset.fullImage;
+
+function addPlaceHolder(torrent) {
+    var placeholderImg = new Image();
+    placeholderImg.src = 'https://www.empornium.me/favicon.ico';
+    placeholderImg.className = 'preview-thumb lazy-img';
+
+    var imageUrl = getImgUrl(torrent);
+    placeholderImg.dataset.thumbUrl = getThumbURL(imageUrl);
+    placeholderImg.dataset.fullImage = imageUrl.replace(/\.th\.|\.md\./i, '.');
+
+    placeholderImg.addEventListener('click', showModal, false);
+
+    var previewDiv = document.createElement('div');
+    previewDiv.className = 'preview-div';
+    previewDiv.appendChild(placeholderImg);
+    var category = torrent.querySelector('.cats_col');
+    category.children[0].style.display = "inline";
+    category.style.whiteSpace = "nowrap";
+    category.appendChild(previewDiv);
 }
 
+function getImgUrl(torrent) {
+    var script = torrent.querySelector('script').innerHTML.replace(/\\\//g, '/').replace(/\\"/g, '');
+    // let imgURL = JSON.parse("\"" + script.match(/src=(.*)><\\\/td>/)[1] + "\"").slice(1, -1);
+    let dummy = document.createElement('div');
+    dummy.innerHTML = script.slice(script.indexOf('=') + 3, -1);  // cut out just the html
+    return dummy.querySelector('img').src;
+}
+
+function getThumbURL(imgURL) {
+    let thumbURL = imgURL.replace('&gif', '');
+    if (!/(th\.jpg|th\.png)|(freeimage|imgbox)|(\.jpg\.)/.test(imgURL)) {
+        if (/\.md\./i.test(imgURL)) {
+            thumbURL = imgURL.replace(".md.", ".th.");
+        } else if (/\.jpg/i.test(imgURL)) {
+            thumbURL = imgURL.replace(".jpg", ".th.jpg");
+        } else if (!/noimage/.test(imgURL)) {
+            thumbURL = thumbURL.replace(/\.md\.png|\.png/i, ".th.png");
+        }
+    }
+    return thumbURL;
+}
 
 function showModal() {
-  var img = this;
-  document.getElementById('wrapper').classList.add('blurry');
-  var myModal = document.createElement('div');
-  myModal.className = 'modal-preview';
-  myModal.id = 'blurbox';
-  myModal.addEventListener('click', hideModal);
-  document.body.appendChild(myModal);
-  var pic = new Image();
-  pic.classList.add('modal-content');
-  pic.style.willChange = 'transform, opacity';
+    var img = this;
+    console.log('img', img);
+    document.getElementById('wrapper').classList.add('blurry');
+    var myModal = document.createElement('div');
+    myModal.className = 'modal-preview';
+    myModal.id = 'blurbox';
+    myModal.addEventListener('click', hideModal);
+    document.body.appendChild(myModal);
+    var pic = new Image();
+    pic.classList.add('modal-content');
+    pic.style.willChange = 'transform, opacity';
 
-  pic.onload = function () {
-    myModal.appendChild(pic);
-    var bRect = img.getBoundingClientRect();
-    pic.style.position = 'fixed';
-    pic.style.top = bRect.top + 'px';
-    pic.style.left = bRect.left + 'px';
-    var startScale = bRect.width / pic.naturalWidth;
-    pic.style.transformOrigin = '0 0';
-    pic.style.transform = 'scale(' + startScale + ')';
-    pic.style.opacity = '0.1';
-    var throwaway = window.getComputedStyle(pic).width; // trigger css update
-    pic.style.transition = 'transform 0.5s, opacity 1.0s, linear';
-    var margin = 100;
-    var endHeightScale = pic.naturalHeight > window.innerHeight - margin ?
-      (window.innerHeight - margin) / pic.naturalHeight : 1;
-    var endWidthScale = pic.naturalWidth > window.innerWidth - margin ?
-      (window.innerWidth - margin) / pic.naturalWidth : 1;
-    var endScale = Math.min(endHeightScale, endWidthScale);
-    var endOffsetX = (window.innerWidth / 2) - (bRect.left + (pic.naturalWidth * endScale / 2));
-    var endOffsetY = (window.innerHeight / 2) - (bRect.top + (pic.naturalHeight * endScale / 2));
-    pic.style.transform = 'translate(' + endOffsetX + 'px,' + endOffsetY + 'px) scale(' + endScale + ')';
-    pic.style.opacity = '1';
-  };
-  pic.src = img.dataset.fullImage;
+    pic.onload = function () {
+        myModal.appendChild(pic);
+        var bRect = img.getBoundingClientRect();
+        pic.style.position = 'fixed';
+        pic.style.top = bRect.top + 'px';
+        pic.style.left = bRect.left + 'px';
+        var startScale = bRect.width / pic.naturalWidth;
+        pic.style.transformOrigin = '0 0';
+        pic.style.transform = 'scale(' + startScale + ')';
+        pic.style.opacity = '0.1';
+        var throwaway = window.getComputedStyle(pic).width; // trigger css update
+        pic.style.transition = 'transform 0.5s, opacity 1.0s, linear';
+        var margin = 100;
+        var endHeightScale = pic.naturalHeight > window.innerHeight - margin ?
+            (window.innerHeight - margin) / pic.naturalHeight : 1;
+        var endWidthScale = pic.naturalWidth > window.innerWidth - margin ?
+            (window.innerWidth - margin) / pic.naturalWidth : 1;
+        var endScale = Math.min(endHeightScale, endWidthScale);
+        var endOffsetX = (window.innerWidth / 2) - (bRect.left + (pic.naturalWidth * endScale / 2));
+        var endOffsetY = (window.innerHeight / 2) - (bRect.top + (pic.naturalHeight * endScale / 2));
+        pic.style.transform = 'translate(' + endOffsetX + 'px,' + endOffsetY + 'px) scale(' + endScale + ')';
+        pic.style.opacity = '1';
+    };
+    pic.src = img.dataset.fullImage;
 }
 
 function hideModal() {
-  document.getElementById('wrapper').classList.remove('blurry');
-  document.getElementById('blurbox').remove();
+    document.getElementById('wrapper').classList.remove('blurry');
+    document.getElementById('blurbox').remove();
 }
 
 var previewStyle = document.createElement('style');
 previewStyle.type = 'text/css';
 previewStyle.appendChild(document.createTextNode(`
 .preview-thumb {
-  max-height: 100px;
-  max-width: 100px;
+    width: 100%;
   cursor: zoom-in;
-  opacity: 0;
-  transition: opacity 0.2s;
 }
 
 .preview-div {
   display: inline-block;
+  width: 80px;
+  height: 80px;
 }
 
 .modal-preview {
