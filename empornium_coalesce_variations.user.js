@@ -6,20 +6,22 @@
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version        5.2
+// @version        5.3
 // ==/UserScript==
 
 const variationRegexes = [
   // resolutions
-  /\d+p|sd(?!\w)|hd(?!\w)|uhd|fullhd|ultrahd|standard|\W\d{1}k|\d+p?x\d+p?\s?(?:px)?|480|720|1080/ig,
+  /\d+p|sd(?!\w)|hd(?!\w)|uhd|fullhd|ultrahd|standard|\W\d{1}k|\d+p?x\d+p?\s?px?|480|720|1080/ig,
   // extras
   /bts|(hq )*image *set|images|picset|with picset|\+?pictures|\+?photoset|x\d+|uhq|\d+\s?pics/ig,
   // framerate
   /\d+(?:\.\d+)?\s?fps/ig,
   // bitrate
   /(?:\d+(?:\.\d+)?\s?(?:k|m)bps)|mobile-(?:high|medium|low)|mobile/ig,
+  // encoding
+  /h\.?265|x\.?265|hevc|hvec|h\.?264|x\.?264/ig,
   // filetype
-  /mpeg4|3gp|mp4|wmv|h\.?265|hevc|hvec|h\.?264/ig,
+  /mpeg4|3gp|mp4|wmv|mkv/ig,
   // VR
   /(?:desktop|gear(?:vr)\/?daydream|smartphone|oculus\/?(?:vive)( rift)?|PlayStationVR PS4|playstation|Google Cardboard)(?: ?vr)?/ig,
     // reported torrents
