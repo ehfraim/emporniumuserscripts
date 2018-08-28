@@ -16,6 +16,7 @@ previewStyle.innerHTML = `
     top: 0;
     background-color: #182236;
     z-index: 1;
+    box-shadow: 0 0 10px black;
   }
 
   #wrapper {
