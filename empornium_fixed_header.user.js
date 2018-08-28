@@ -24,7 +24,7 @@ previewStyle.innerHTML = `
   }
 
   #details-sidebar {
-    padding-top: 35px;
+    padding-top: 55px;
 }
 `;
 document.head.appendChild(previewStyle);
