@@ -2,15 +2,15 @@
 // @name        empornium replace whitespace in tag inputs
 // @namespace   none
 // @description Replaces whitespace with dots when pasting into tag inputs
-// @include     https://www.empornium.me/*
-// @version     1
+// @include     https://www.empornium.tld/*
+// @version     2
 // @grant       none
 // @run-at      document-idle
 // ==/UserScript==
 
 var taginput = document.getElementById('taginput');
 var topTagInput = document.getElementById('searchbox_tags');
-taginput.onpaste = replaceWhiteSpace;
+if (taginput) taginput.onpaste = replaceWhiteSpace;
 topTagInput.onpaste = replaceWhiteSpace;
 
 function replaceWhiteSpace(e) {
@@ -22,5 +22,5 @@ function replaceWhiteSpace(e) {
 
   window.setTimeout( () => {
     e.target.value = corrected;
-  }, 1); 
+  }, 1);
 }
