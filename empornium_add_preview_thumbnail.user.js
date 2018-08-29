@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name           Empornium add preview thumbnail
-// @description    Lazy loads thumbnails 
+// @description    Lazy loads thumbnails
 // @namespace      empornium
 // @include        https://www.empornium.tld/*
-// @version        3
+// @version        4
 // @grant          none
 // run-at          document-idle
 // ==/UserScript==
@@ -22,18 +22,21 @@ var lazyImageObserver = new IntersectionObserver((entries, observer) => {
             if (preloadFullSizeImages) {
                 var preloadImg = new Image();
                 preloadImg.src = lazyImage.dataset.fullImage;
+                preloadImg.dataset.targetId = lazyImage.id;
+                preloadImg.onload = function() {
+                    var thumb = document.getElementById(this.dataset.targetId);
+                    thumb.classList.add('fullsize-loaded');
+                };
             }
-            lazyImage.onerror = function () {
-                var previewImgEl = document.getElementById(this.dataset.preview);
-                // previewImgEl.src = 'https://fapping.empornium.sx/images/2017/11/29/Broken-Image.th.png'; // backup
-                previewImgEl.src = 'https://xxx.freeimage.us/thumb.php?id=D9D0_5A1E8C7B';
-                // previewImgEl.style.height = '50px';
-            };
+//             lazyImage.onerror = function () {
+//                 // this.src = 'https://fapping.empornium.sx/images/2017/11/29/Broken-Image.th.png'; // backup
+//                 this.src = 'https://xxx.freeimage.us/thumb.php?id=D9D0_5A1E8C7B';
+//             };
             lazyImage.classList.remove('lazy-img');
             lazyImageObserver.unobserve(lazyImage);
         }
     }
-}, { rootMargin: "100px" }); //start loading image before it is visable
+}, {rootMargin: "300px"}); //start loading image before it is visable
 
 document.querySelectorAll('.preview-thumb').forEach(lazyImage => {
     lazyImageObserver.observe(lazyImage);
@@ -41,9 +44,12 @@ document.querySelectorAll('.preview-thumb').forEach(lazyImage => {
 
 
 function addPlaceHolder(torrent) {
+    var torrentId = torrent.querySelector('a[href*="/torrents.php?id"]').href.match(/id=(\d+)/)[1];
+
     var placeholderImg = new Image();
     placeholderImg.src = 'https://www.empornium.me/favicon.ico';
     placeholderImg.className = 'preview-thumb lazy-img';
+    placeholderImg.id = 'preview-' + torrentId;
 
     var imageUrl = getImgUrl(torrent);
     placeholderImg.dataset.thumbUrl = getThumbURL(imageUrl);
@@ -55,6 +61,7 @@ function addPlaceHolder(torrent) {
     previewDiv.className = 'preview-div';
     previewDiv.appendChild(placeholderImg);
     var category = torrent.querySelector('.cats_col');
+    if (!category) category = torrent.querySelector('.cats_cols');
     category.children[0].style.display = "inline";
     category.style.whiteSpace = "nowrap";
     category.appendChild(previewDiv);
@@ -62,9 +69,8 @@ function addPlaceHolder(torrent) {
 
 function getImgUrl(torrent) {
     var script = torrent.querySelector('script').innerHTML.replace(/\\\//g, '/').replace(/\\"/g, '');
-    // let imgURL = JSON.parse("\"" + script.match(/src=(.*)><\\\/td>/)[1] + "\"").slice(1, -1);
     let dummy = document.createElement('div');
-    dummy.innerHTML = script.slice(script.indexOf('=') + 3, -1);  // cut out just the html
+    dummy.innerHTML = script.slice(script.indexOf('=') + 3, -1); //cut out just the html
     return dummy.querySelector('img').src;
 }
 
@@ -84,7 +90,7 @@ function getThumbURL(imgURL) {
 
 function showModal() {
     var img = this;
-    console.log('img', img);
+    console.log('img',img);
     document.getElementById('wrapper').classList.add('blurry');
     var myModal = document.createElement('div');
     myModal.className = 'modal-preview';
@@ -95,7 +101,7 @@ function showModal() {
     pic.classList.add('modal-content');
     pic.style.willChange = 'transform, opacity';
 
-    pic.onload = function () {
+    pic.onload = function() {
         myModal.appendChild(pic);
         var bRect = img.getBoundingClientRect();
         pic.style.position = 'fixed';
@@ -106,7 +112,7 @@ function showModal() {
         pic.style.transform = 'scale(' + startScale + ')';
         pic.style.opacity = '0.1';
         var throwaway = window.getComputedStyle(pic).width; // trigger css update
-        pic.style.transition = 'transform 0.5s, opacity 1.0s, linear';
+        pic.style.transition = 'transform 0.5s, opacity 1.0s, ease-in-out';
         var margin = 100;
         var endHeightScale = pic.naturalHeight > window.innerHeight - margin ?
             (window.innerHeight - margin) / pic.naturalHeight : 1;
@@ -130,7 +136,7 @@ var previewStyle = document.createElement('style');
 previewStyle.type = 'text/css';
 previewStyle.appendChild(document.createTextNode(`
 .preview-thumb {
-    width: 100%;
+  width: 100%;
   cursor: zoom-in;
 }
 
@@ -138,6 +144,10 @@ previewStyle.appendChild(document.createTextNode(`
   display: inline-block;
   width: 80px;
   height: 80px;
+}
+
+.fullsize-loaded {
+  outline: solid 2px #9cb7d2;
 }
 
 .modal-preview {
