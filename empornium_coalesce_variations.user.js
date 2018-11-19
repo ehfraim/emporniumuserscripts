@@ -6,7 +6,7 @@
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version        5.5
+// @version        5.6
 // ==/UserScript==
 
 const variationRegexes = [
@@ -58,7 +58,8 @@ function combineTorrents(multiTorrent) {
       mt.cleanHeading = mt.cleanHeading + ' [mp4]';
     }
     const nameDiv = document.createElement('div');
-    nameDiv.appendChild(mt.script);
+	if (mt.script)
+		nameDiv.appendChild(mt.script);
     const title = mt.title;
     title.textContent = mt.cleanHeading;
     nameDiv.appendChild(title);
@@ -117,7 +118,7 @@ function combineTorrents(multiTorrent) {
 }
 
 function heading(t) {
-  return t.querySelector('a[onmouseover]').textContent;
+  return t.querySelector('a[href*="torrents.php?id="]').textContent;
 }
 
 function extractVariation(title) {
@@ -185,7 +186,7 @@ function extractData(bunch) {
     multiTorrent.headings.push(title);
     multiTorrent.variations.push(bunch.variations[rowIndex++].variation);
     tags = tags.concat([...row.querySelector('div.tags').children]);
-    multiTorrent.hrefs.push(row.querySelector('a[onmouseover]').href);
+    multiTorrent.hrefs.push(row.querySelector('a[href*="torrents.php?id="]').href);
     multiTorrent.info.push(row.querySelector('span[style]'));
     multiTorrent.newTorrent.push(row.querySelector('span.newtorrent'));
 
@@ -209,7 +210,7 @@ function extractData(bunch) {
   multiTorrent.category = tds[0];
   multiTorrent.time = tds[4];
   multiTorrent.script = bunch.tableRows[0].querySelector('script');
-  multiTorrent.title = bunch.tableRows[0].querySelector('a[onmouseover]');
+  multiTorrent.title = bunch.tableRows[0].querySelector('a[href*="torrents.php?id="]');
   return multiTorrent;
 }
 
