@@ -5,7 +5,7 @@
 // @namespace      empornium
 // @include        https://www.empornium.tld/*
 // @exclude        https://www.empornium.tld/torrents.php?id=*
-// @version        5
+// @version        5.1
 // @grant          none
 // run-at          document-idle
 // ==/UserScript==
