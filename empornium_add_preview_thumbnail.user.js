@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name           Empornium add preview thumbnail
 // @description    Lazy loads thumbnails
-// @author         ephfraim
+// @author         ephraim
 // @namespace      empornium
 // @include        https://www.empornium.tld/*
 // @exclude        https://www.empornium.tld/torrents.php?id=*
