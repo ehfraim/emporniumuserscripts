@@ -3,7 +3,8 @@
 // @description    Lazy loads thumbnails
 // @namespace      empornium
 // @include        https://www.empornium.tld/*
-// @version        4
+// @exclude        https://www.empornium.tld/torrents.php?id=*
+// @version        5
 // @grant          none
 // run-at          document-idle
 // ==/UserScript==
@@ -18,11 +19,20 @@ var lazyImageObserver = new IntersectionObserver((entries, observer) => {
     for (var entry of entries) {
         if (entry.isIntersecting) {
             var lazyImage = entry.target;
-            lazyImage.src = lazyImage.dataset.thumbUrl;
+			var thumbnail = new Image();
+			thumbnail.src = lazyImage.dataset.thumbUrl;
+			thumbnail.className = 'preview-thumb';
+			thumbnail.id = lazyImage.dataset.previewId;
+			thumbnail.dataset.fullImage = lazyImage.dataset.fullImage;
+			thumbnail.addEventListener('click', showModal, false);
+
+			lazyImage.style.display = 'none';
+			lazyImage.parentNode.appendChild(thumbnail);
+
             if (preloadFullSizeImages) {
                 var preloadImg = new Image();
                 preloadImg.src = lazyImage.dataset.fullImage;
-                preloadImg.dataset.targetId = lazyImage.id;
+                preloadImg.dataset.targetId = lazyImage.dataset.previewId;
                 preloadImg.onload = function() {
                     var thumb = document.getElementById(this.dataset.targetId);
                     thumb.classList.add('fullsize-loaded');
@@ -49,13 +59,11 @@ function addPlaceHolder(torrent) {
     var placeholderImg = new Image();
     placeholderImg.src = 'https://www.empornium.me/favicon.ico';
     placeholderImg.className = 'preview-thumb lazy-img';
-    placeholderImg.id = 'preview-' + torrentId;
+    placeholderImg.dataset.previewId = 'preview-' + torrentId;
 
     var imageUrl = getImgUrl(torrent);
     placeholderImg.dataset.thumbUrl = getThumbURL(imageUrl);
     placeholderImg.dataset.fullImage = imageUrl.replace(/\.th\.|\.md\./i, '.');
-
-    placeholderImg.addEventListener('click', showModal, false);
 
     var previewDiv = document.createElement('div');
     previewDiv.className = 'preview-div';
@@ -90,7 +98,6 @@ function getThumbURL(imgURL) {
 
 function showModal() {
     var img = this;
-    console.log('img',img);
     document.getElementById('wrapper').classList.add('blurry');
     var myModal = document.createElement('div');
     myModal.className = 'modal-preview';
