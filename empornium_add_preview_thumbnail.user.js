@@ -120,7 +120,7 @@ function showModal() {
         pic.style.transform = 'scale(' + startScale + ')';
         pic.style.opacity = '0.1';
         var throwaway = window.getComputedStyle(pic).width; // trigger css update
-        pic.style.transition = 'transform 0.5s, opacity 1.0s, ease-in-out';
+        pic.style.transition = 'transform 0.5s, opacity 1.0s, ease-in-out 0.5s';
         var margin = 100;
         var endHeightScale = pic.naturalHeight > window.innerHeight - margin ?
             (window.innerHeight - margin) / pic.naturalHeight : 1;
