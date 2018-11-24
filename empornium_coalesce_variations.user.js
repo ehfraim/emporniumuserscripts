@@ -1,5 +1,6 @@
 // ==UserScript==
 // @name           Empornium coalesce variations
+// @author         ephraim
 // @namespace      empornium
 // @description    Combines torrents of different variations to one row
 // @include        /https?://www\.empornium\.(me|sx)/(torrents|user)\.php/
