@@ -5,7 +5,7 @@
 // @namespace      empornium
 // @include        https://www.empornium.tld/*
 // @exclude        https://www.empornium.tld/torrents.php?id=*
-// @version        6
+// @version        6.1
 // @grant          none
 // run-at          document-idle
 // ==/UserScript==
@@ -21,7 +21,9 @@ async function loadImage(image) {
 		// make animated gifs static at first
 		if (/\.gif/.test(image.dataset.thumbUrl)) {
 			image.src = image.dataset.thumbUrl.replace('.gif', '.th.gif');
-		}		
+		} else if (/&gif/.test(image.dataset.thumbUrl)) { // freeimage animated gif
+			image.src = image.dataset.thumbUrl.replace('&gif', '');
+		}
 		var result = await getImage(image.dataset.thumbUrl);
 		image.src = image.dataset.thumbUrl;
 	} catch(error) {
@@ -93,7 +95,7 @@ function getImgUrl(torrent) {
 }
 
 function getThumbURL(imgURL) {
-    let thumbURL = imgURL.replace('&gif', '');
+    let thumbURL = imgURL;
     if (!/(th\.jpg|th\.png)|(freeimage|imgbox)|(\.jpg\.)/.test(imgURL)) {
         if (/\.md\./i.test(imgURL)) {
             thumbURL = imgURL.replace(".md.", ".th.");
