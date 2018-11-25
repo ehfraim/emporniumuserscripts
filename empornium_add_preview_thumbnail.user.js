@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name           Empornium add preview thumbnail
 // @description    Lazy loads thumbnails
-// @author         ephraim
+// @author         ephfraim
 // @namespace      empornium
 // @include        https://www.empornium.tld/*
 // @exclude        https://www.empornium.tld/torrents.php?id=*
-// @version        5.1
+// @version        6
 // @grant          none
 // run-at          document-idle
 // ==/UserScript==
@@ -16,33 +16,41 @@ document.querySelectorAll('tr.torrent').forEach(torrent => {
     addPlaceHolder(torrent);
 });
 
+async function loadImage(image) {
+	try {
+		// make animated gifs static at first
+		if (/\.gif/.test(image.dataset.thumbUrl)) {
+			image.src = image.dataset.thumbUrl.replace('.gif', '.th.gif');
+		}		
+		var result = await getImage(image.dataset.thumbUrl);
+		image.src = image.dataset.thumbUrl;
+	} catch(error) {
+		image.src = 'https://xxx.freeimage.us/thumb.php?id=D9D0_5A1E8C7B';
+		//image.src = 'https://fapping.empornium.sx/images/2017/11/29/Broken-Image.th.png'; // backup
+	}
+}
+
+function getImage(url, imageToGet) {
+	return new Promise((resolve, reject) => {
+		var image = new Image();
+		image.src = url;
+		image.onload = () => {resolve(imageToGet)}
+        image.onerror = () => {reject(new Error())}
+	});
+}
+
+
 var lazyImageObserver = new IntersectionObserver((entries, observer) => {
     for (var entry of entries) {
         if (entry.isIntersecting) {
-            var lazyImage = entry.target;
-			var thumbnail = new Image();
-			thumbnail.src = lazyImage.dataset.thumbUrl;
-			thumbnail.className = 'preview-thumb';
-			thumbnail.id = lazyImage.dataset.previewId;
-			thumbnail.dataset.fullImage = lazyImage.dataset.fullImage;
-			thumbnail.addEventListener('click', showModal, false);
-
-			lazyImage.style.display = 'none';
-			lazyImage.parentNode.appendChild(thumbnail);
+			var lazyImage = entry.target;
+			loadImage(lazyImage);
 
             if (preloadFullSizeImages) {
-                var preloadImg = new Image();
-                preloadImg.src = lazyImage.dataset.fullImage;
-                preloadImg.dataset.targetId = lazyImage.dataset.previewId;
-                preloadImg.onload = function() {
-                    var thumb = document.getElementById(this.dataset.targetId);
+				getImage(lazyImage.dataset.fullImage, lazyImage).then(thumb => {
                     thumb.classList.add('fullsize-loaded');
-                };
+				});
             }
-//             lazyImage.onerror = function () {
-//                 // this.src = 'https://fapping.empornium.sx/images/2017/11/29/Broken-Image.th.png'; // backup
-//                 this.src = 'https://xxx.freeimage.us/thumb.php?id=D9D0_5A1E8C7B';
-//             };
             lazyImage.classList.remove('lazy-img');
             lazyImageObserver.unobserve(lazyImage);
         }
@@ -60,11 +68,12 @@ function addPlaceHolder(torrent) {
     var placeholderImg = new Image();
     placeholderImg.src = 'https://www.empornium.me/favicon.ico';
     placeholderImg.className = 'preview-thumb lazy-img';
-    placeholderImg.dataset.previewId = 'preview-' + torrentId;
+    placeholderImg.id = 'preview-' + torrentId;
 
     var imageUrl = getImgUrl(torrent);
     placeholderImg.dataset.thumbUrl = getThumbURL(imageUrl);
     placeholderImg.dataset.fullImage = imageUrl.replace(/\.th\.|\.md\./i, '.');
+	placeholderImg.addEventListener('click', showModal, false);
 
     var previewDiv = document.createElement('div');
     previewDiv.className = 'preview-div';
@@ -120,7 +129,7 @@ function showModal() {
         pic.style.transform = 'scale(' + startScale + ')';
         pic.style.opacity = '0.1';
         var throwaway = window.getComputedStyle(pic).width; // trigger css update
-        pic.style.transition = 'transform 0.5s, opacity 1.0s, ease-in-out 0.5s';
+        pic.style.transition = 'transform 0.5s, opacity 1.0s, ease-in-out 0.3s';
         var margin = 100;
         var endHeightScale = pic.naturalHeight > window.innerHeight - margin ?
             (window.innerHeight - margin) / pic.naturalHeight : 1;
