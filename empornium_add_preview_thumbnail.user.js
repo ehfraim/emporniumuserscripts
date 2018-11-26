@@ -5,7 +5,7 @@
 // @namespace      empornium
 // @include        https://www.empornium.tld/*
 // @exclude        https://www.empornium.tld/torrents.php?id=*
-// @version        6.1
+// @version        6.2
 // @grant          none
 // run-at          document-idle
 // ==/UserScript==
@@ -16,48 +16,51 @@ document.querySelectorAll('tr.torrent').forEach(torrent => {
     addPlaceHolder(torrent);
 });
 
-async function loadImage(image) {
-	try {
-		// make animated gifs static at first
-		if (/\.gif/.test(image.dataset.thumbUrl)) {
-			image.src = image.dataset.thumbUrl.replace('.gif', '.th.gif');
-		} else if (/&gif/.test(image.dataset.thumbUrl)) { // freeimage animated gif
-			image.src = image.dataset.thumbUrl.replace('&gif', '');
-		}
-		var result = await getImage(image.dataset.thumbUrl);
-		image.src = image.dataset.thumbUrl;
-	} catch(error) {
-		image.src = 'https://xxx.freeimage.us/thumb.php?id=D9D0_5A1E8C7B';
-		//image.src = 'https://fapping.empornium.sx/images/2017/11/29/Broken-Image.th.png'; // backup
-	}
+
+async function loadImage(image) {    
+    try {
+        // make animated gifs static at first
+        if (/\.gif/.test(image.dataset.thumbUrl)) {
+            image.src = image.dataset.thumbUrl.replace('.gif', '.th.gif');
+        } else if (/&gif/.test(image.dataset.thumbUrl)) { // freeimage animated gif
+            image.src = image.dataset.thumbUrl.replace('&gif', '');
+        }
+        var result = await getImage(image.dataset.thumbUrl);
+        image.src = image.dataset.thumbUrl;
+    } catch(error) {
+        image.src = 'https://xxx.freeimage.us/thumb.php?id=D9D0_5A1E8C7B';
+        //image.src = 'https://fapping.empornium.sx/images/2017/11/29/Broken-Image.th.png'; // backup
+    }
 }
 
+
 function getImage(url, imageToGet) {
-	return new Promise((resolve, reject) => {
-		var image = new Image();
-		image.src = url;
-		image.onload = () => {resolve(imageToGet)}
+    return new Promise((resolve, reject) => {
+        var image = new Image();
+        image.src = url;
+        image.onload = () => {resolve(imageToGet)}
         image.onerror = () => {reject(new Error())}
-	});
+    });
 }
 
 
 var lazyImageObserver = new IntersectionObserver((entries, observer) => {
     for (var entry of entries) {
         if (entry.isIntersecting) {
-			var lazyImage = entry.target;
-			loadImage(lazyImage);
+            var lazyImage = entry.target;
+            loadImage(lazyImage);
 
             if (preloadFullSizeImages) {
-				getImage(lazyImage.dataset.fullImage, lazyImage).then(thumb => {
+                getImage(lazyImage.dataset.fullImage, lazyImage).then(thumb => {
                     thumb.classList.add('fullsize-loaded');
-				});
+                });
             }
             lazyImage.classList.remove('lazy-img');
             lazyImageObserver.unobserve(lazyImage);
         }
     }
 }, {rootMargin: "300px"}); //start loading image before it is visable
+
 
 document.querySelectorAll('.preview-thumb').forEach(lazyImage => {
     lazyImageObserver.observe(lazyImage);
@@ -75,7 +78,7 @@ function addPlaceHolder(torrent) {
     var imageUrl = getImgUrl(torrent);
     placeholderImg.dataset.thumbUrl = getThumbURL(imageUrl);
     placeholderImg.dataset.fullImage = imageUrl.replace(/\.th\.|\.md\./i, '.');
-	placeholderImg.addEventListener('click', showModal, false);
+    placeholderImg.addEventListener('click', showModal, false);
 
     var previewDiv = document.createElement('div');
     previewDiv.className = 'preview-div';
@@ -89,10 +92,9 @@ function addPlaceHolder(torrent) {
 
 function getImgUrl(torrent) {
     var script = torrent.querySelector('script').innerHTML.replace(/\\\//g, '/').replace(/\\"/g, '');
-    let dummy = document.createElement('div');
-    dummy.innerHTML = script.slice(script.indexOf('=') + 3, -1); //cut out just the html
-    return dummy.querySelector('img').src;
+    return script.match(/src=([\w\W]*)><\/td/)[1];
 }
+
 
 function getThumbURL(imgURL) {
     let thumbURL = imgURL;
@@ -107,6 +109,7 @@ function getThumbURL(imgURL) {
     }
     return thumbURL;
 }
+
 
 function showModal() {
     var img = this;
@@ -145,6 +148,7 @@ function showModal() {
     };
     pic.src = img.dataset.fullImage;
 }
+
 
 function hideModal() {
     document.getElementById('wrapper').classList.remove('blurry');
