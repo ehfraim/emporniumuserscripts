@@ -3,7 +3,7 @@
 // @namespace   empornium
 // @description Move tag list to middle and change layout to columns
 // @include     https://www.empornium.me/torrents.php?id=*
-// @version     2
+// @version     3
 // @grant       none
 // ==/UserScript==
 
@@ -14,13 +14,17 @@ var tags = document.getElementById('tag_container');
 var style = document.createElement('style');
 style.innerHTML = `
 ul.tag_list {
-margin: 15px;
+  margin: 15px;
+}
+
+ul.tag_list>li:nth-child(odd) {
+  background-color: #eff3f6
 }
 
 li.tag_item {
-margin: 1px 0px 3px 0px;
-overflow: hidden;
-max-width:180px;
+  margin: 1px 0px 3px 0px;
+  overflow: hidden;
+  max-width:180px;
 }
 
 li.tag_item > a {
@@ -30,7 +34,7 @@ li.tag_item > a {
 }
 
 a[title^="Vote up tag"] + span {
-display: none;
+  display: none;
 }
 
 #torrent_tags_list {
