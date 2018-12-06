@@ -5,9 +5,9 @@
 // @namespace      empornium
 // @include        https://www.empornium.tld/*
 // @exclude        https://www.empornium.tld/torrents.php?id=*
-// @version        6.2
+// @version        6.3
 // @grant          none
-// run-at          document-idle
+// @run-at         document-body
 // ==/UserScript==
 
 var preloadFullSizeImages = true;
@@ -102,7 +102,7 @@ function getThumbURL(imgURL) {
         if (/\.md\./i.test(imgURL)) {
             thumbURL = imgURL.replace(".md.", ".th.");
         } else if (/\.jpg/i.test(imgURL)) {
-            thumbURL = imgURL.replace(".jpg", ".th.jpg");
+            thumbURL = imgURL.replace(/\.jpg$/, ".th.jpg");
         } else if (!/noimage/.test(imgURL)) {
             thumbURL = thumbURL.replace(/\.md\.png|\.png/i, ".th.png");
         }
