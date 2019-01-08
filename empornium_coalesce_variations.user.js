@@ -7,7 +7,7 @@
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version        5.8
+// @version        5.9
 // ==/UserScript==
 
 const variationRegexes = [
@@ -18,7 +18,7 @@ const variationRegexes = [
   // framerate
   /\d+(?:\.\d+)?\s?fps/ig,
   // bitrate
-  /(?:\d+(?:\.\d+)?\s?(?:k|m)bps)|mobile-(?:high|medium|low)|mobile/ig,
+  /(?:\d+(?:\.\d+)?\s?(?:k|m)bps)|mobile-(?:high|medium|low)|mobile|(?:low|medium|high) ?bitrate/ig,
   // encoding
   /h\.?265|x\.?265|hevc|hvec|h\.?264|x\.?264/ig,
   // filetype
