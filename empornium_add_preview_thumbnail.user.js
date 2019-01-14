@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name           Empornium add preview thumbnail
 // @description    Lazy loads thumbnails
-// @author         ephfraim
+// @author         ephraim
 // @namespace      empornium
-// @include        https://www.empornium.tld/*
+// @include        https://www.empornium.tld/top10.php
+// @include        https://www.empornium.tld/torrents.php*
 // @exclude        https://www.empornium.tld/torrents.php?id=*
-// @version        6.3
+// @version        6.5
 // @grant          none
 // @run-at         document-body
 // ==/UserScript==
@@ -92,7 +93,7 @@ function addPlaceHolder(torrent) {
 
 function getImgUrl(torrent) {
     var script = torrent.querySelector('script').innerHTML.replace(/\\\//g, '/').replace(/\\"/g, '');
-    return script.match(/src=([\w\W]*)><\/td/)[1];
+    return script.match(/src=([\w\W]*)><\/td/)[1].replace('&amp;', '&');
 }
 
 
