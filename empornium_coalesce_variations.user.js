@@ -7,12 +7,12 @@
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version        5.9
+// @version        5.91
 // ==/UserScript==
 
 const variationRegexes = [
   // resolutions
-  /\d+p|sd(?!\w)|hd(?!\w)|uhd|fullhd|ultrahd|standard|[1-9]{1}k|\d+p?x\d+p?\s?(?:px)?|480|720|1080/ig,
+  /\d+p|sd(?!\w)|hd(?!\w)|uhd|fullhd|ultrahd|standard|\b[1-9]{1}k|\d+p?x\d+p?\s?(?:px)?|480|720|1080/ig,
   // extras
   /bts|(hq )*image *set|images|(?:with )?picset|\+?pictures|\+?photoset|x\d+|uhq|\d+\s?pics|requested|request|req/ig,
   // framerate
