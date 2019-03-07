@@ -15,6 +15,6 @@ document.querySelectorAll('.icon_disk_none').forEach(i => {
 function changeIcon(e) {
   if (e.target.classList.contains('icon_disk_none')) {
     e.target.classList.add('icon_disk_grabbed');
-    e.target.classList.remove('icon_disk_none')
+    e.target.classList.remove('icon_disk_none');
   }
 }
