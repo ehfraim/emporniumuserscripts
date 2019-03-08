@@ -7,7 +7,7 @@
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version        5.91
+// @version        5.92
 // ==/UserScript==
 
 const variationRegexes = [
@@ -77,6 +77,7 @@ function combineTorrents(multiTorrent) {
       variationName.textContent = mt.variations[i];
       variationName.href = mt.hrefs[i];
       variationName.title = mt.headings[i];
+	  variationName.style.marginRight = '4px';
       li.appendChild(variationName);
       li.appendChild(mt.info[i]);
       li.style.marginRight = '0';
