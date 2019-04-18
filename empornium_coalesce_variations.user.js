@@ -7,14 +7,14 @@
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version        5.93
+// @version        5.94
 // ==/UserScript==
 
 const variationRegexes = [
   // resolutions
-  /\d+p|sd(?!\w)|hd(?!\w)|uhd|fullhd|ultrahd|standard|\b[1-9]{1}k|\d+p?x\d+p?\s?(?:px)?|480|720|1080/ig,
+  /\d+p(?:\d+)?|sd(?!\w)|hd(?!\w)|uhd|fullhd|ultrahd|standard|\b[1-9]{1}k|\d+p?x\d+p?\s?(?:px)?|480|720|1080/ig,
   // extras
-  /bts|(hq )*image *set|images|(?:with )?picset|\+?pictures|\+?photoset|x\d+|uhq|\d+\s?pics|requested|request|req/ig,
+  /bts|(hq )*image *set|images|(?:with )?picset|\+?pictures|\+?photoset|pics|pic set|x\d+|uhq|\d+\s?pics|requested|request|req/ig,
   // framerate
   /\d+(?:\.\d+)?\s?fps/ig,
   // bitrate
@@ -135,7 +135,7 @@ function extractVariation(title) {
       cleanTitle = cleanTitle.replace(match, '');
     }
   }
-  cleanTitle = cleanTitle.replace(/\!+|\+|,|\&| \/$|\[\s?\]|\(\s?\)/g, '').replace(/\[.?\]|\(.?\)/g, '');
+  cleanTitle = cleanTitle.replace(/\!+|\+|,|\&| \/$|\[[\s\W]*\]|\(\s?\)/g, '').replace(/\[.?\]|\(.?\)/g, '');
   cleanTitle = cleanTitle.replace(/\s+/g, ' ').trim().replace(/ \.|( \-|in|freeleech|\[req\])$/i, '').trim();
   if (variations.length < 1) variations.push('other');
   return { variation: '[' + variations.join(', ') + ']', cleanTitle: cleanTitle };
