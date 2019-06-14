@@ -25,7 +25,7 @@ const variationRegexes = [
   /mpeg4|3gp|mp4|wmv|mkv/ig,
   // VR
   /(?:desktop|gearvr\/?daydream|gear|daydream|smartphone|oculus\/?(?:vive)(?: rift)?|oculus|PlayStationVR PS4|playstation|Google Cardboard)(?: ?vr)?/ig,
-    // reported torrents
+  // reported torrents
   / \/ Reported/i
 ];
 
@@ -52,15 +52,15 @@ function combineTorrents(multiTorrent) {
       tcells.push(td);
     }
     const mt = extractData(torrent);
-    if (mt.variations.every(e=>/mp4/i.test(e))) {
+    if (mt.variations.every(e => /mp4/i.test(e))) {
       for (let i = 0; i < mt.variations.length; i++) {
         mt.variations[i] = mt.variations[i].replace(/, mp4/i, '');
       }
       mt.cleanHeading = mt.cleanHeading + ' [mp4]';
     }
     const nameDiv = document.createElement('div');
-	if (mt.script)
-		nameDiv.appendChild(mt.script);
+    if (mt.script)
+      nameDiv.appendChild(mt.script);
     const title = mt.title;
     title.textContent = mt.cleanHeading;
     nameDiv.appendChild(title);
@@ -77,7 +77,7 @@ function combineTorrents(multiTorrent) {
       variationName.textContent = mt.variations[i];
       variationName.href = mt.hrefs[i];
       variationName.title = mt.headings[i];
-	  variationName.style.marginRight = '4px';
+      variationName.style.marginRight = '4px';
       li.appendChild(variationName);
       li.appendChild(mt.info[i]);
       li.style.marginRight = '0';
