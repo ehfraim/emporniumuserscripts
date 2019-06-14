@@ -12,7 +12,7 @@
 
 const variationRegexes = [
   // resolutions
-  /\d+p(?:\d+)?|sd(?!\w)|hd(?!\w)|uhd|fullhd|ultrahd|standard|\b[1-9]{1}k|\d+p?x\d+p?\s?(?:px)?|480|720|1080|(?:\d* ?MP)/ig,
+  /\d+p(?:\d+)?|sd(?!\w)|hd(?!\w)|uhd|fullhd|ultrahd|standard|\b[1-9]{1}k|\d+p?x\d+p?\s?(?:px)?|480|720|1080|(?:\d+ ?MP)/ig,
   // extras
   /bts|(hq )*image *set|images|(?:with )?picset|\+?pictures|\+?photoset|pics|pic set|x\d+|uhq|\d+\s?pics|requested|request|req/ig,
   // framerate
@@ -33,7 +33,7 @@ const soupCache = new Map();
 
 // console.time('Total time combining torrents');
 // console.time('Grouping torrents');
-const multipleTorrents = groupVariations().filter(t => t.tableRows.length > 1);
+const multipleTorrents = groupVariations();
 // console.timeEnd('Grouping torrents');
 // console.time('Combining torrents');
 const combinedTorrents = combineTorrents(multipleTorrents);
@@ -52,12 +52,6 @@ function combineTorrents(multiTorrent) {
       tcells.push(td);
     }
     const mt = extractData(torrent);
-    if (mt.variations.every(e => /mp4/i.test(e))) {
-      for (let i = 0; i < mt.variations.length; i++) {
-        mt.variations[i] = mt.variations[i].replace(/, mp4/i, '');
-      }
-      mt.cleanHeading = mt.cleanHeading + ' [mp4]';
-    }
     const nameDiv = document.createElement('div');
     if (mt.script)
       nameDiv.appendChild(mt.script);
@@ -162,7 +156,7 @@ function groupVariations() {
       torrentTable.push({ cleanHeading: cleanHeading, tableRows: [torrent], variations: [variation] });
     }
   }
-  return torrentTable;
+  return torrentTable.filter(t => t.tableRows.length > 1);
 }
 
 function extractData(bunch) {
