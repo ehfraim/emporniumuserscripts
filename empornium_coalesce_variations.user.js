@@ -7,7 +7,7 @@
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version        5.95
+// @version        6
 // ==/UserScript==
 
 const variationRegexes = [
@@ -97,7 +97,7 @@ function combineTorrents(multiTorrent) {
     tcells[1].appendChild(nameDiv);
     tcells[2].appendChild(makeList(mt.files));
     tcells[3].appendChild(makeList(mt.comments));
-    tcells[4] = mt.time;
+    tcells[4].appendChild(makeList(mt.times));
     tcells[5].appendChild(makeList(mt.sizes));
     tcells[6].appendChild(makeList(mt.snatches));
     tcells[7].appendChild(makeList(mt.seeders));
@@ -175,6 +175,7 @@ function extractData(bunch) {
   multiTorrent.newTorrent = [];
   multiTorrent.files = [];
   multiTorrent.comments = [];
+  multiTorrent.times = [];
   multiTorrent.sizes = [];
   multiTorrent.snatches = [];
   multiTorrent.seeders = [];
@@ -195,6 +196,7 @@ function extractData(bunch) {
     tds = row.querySelectorAll('td');
     multiTorrent.files.push(tds[2].innerHTML);
     multiTorrent.comments.push(tds[3].innerHTML);
+    multiTorrent.times.push(tds[4].innerHTML);
     multiTorrent.sizes.push(tds[5].innerHTML);
     multiTorrent.snatches.push(tds[6].innerHTML);
     multiTorrent.seeders.push(tds[7].innerHTML);
@@ -210,7 +212,6 @@ function extractData(bunch) {
   }, []);
   multiTorrent.tags = uniqueTags;
   multiTorrent.category = tds[0];
-  multiTorrent.time = tds[4];
   multiTorrent.script = bunch.tableRows[0].querySelector('script');
   multiTorrent.title = bunch.tableRows[0].querySelector('a[href*="torrents.php?id="]');
   return multiTorrent;
