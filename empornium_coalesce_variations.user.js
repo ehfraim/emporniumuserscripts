@@ -7,7 +7,7 @@
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version        6
+// @version        6.1
 // ==/UserScript==
 
 const variationRegexes = [
@@ -184,7 +184,7 @@ function extractData(bunch) {
     multiTorrent.variations.push(bunch.variations[rowIndex++].variation);
     tags = tags.concat([...row.querySelector('div.tags').children]);
     multiTorrent.hrefs.push(row.querySelector('a[href*="torrents.php?id="]').href);
-    multiTorrent.info.push(row.querySelector('span[style]'));
+    multiTorrent.info.push(row.querySelector('span.torrent_icon_container'));
     multiTorrent.newTorrent.push(row.querySelector('span.newtorrent'));
 
     tds = row.querySelectorAll('td');
