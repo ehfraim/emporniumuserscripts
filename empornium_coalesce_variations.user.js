@@ -7,7 +7,7 @@
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version        6.1
+// @version        6.11
 // ==/UserScript==
 
 const variationRegexes = [
@@ -60,7 +60,7 @@ function combineTorrents(multiTorrent) {
     nameDiv.appendChild(title);
 
     const infoUl = document.createElement('ul');
-    infoUl.style.cssText = 'float: right; list-style: none; text-align: right;';
+    infoUl.style.cssText = 'display: inline-flex; flex-direction: column; float: right; list-style: none; text-align: right;';
     for (let i = 0; i < mt.variations.length; i++) {
       const li = document.createElement('li');
       if (mt.newTorrent[i]) {
