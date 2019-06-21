@@ -218,6 +218,8 @@ function makeList(list) {
   for (const el of list) {
     const li = document.createElement('li');
     li.style.margin = '0';
+    li.style.paddingTop = '5px';
+    li.style.paddingBottom = '5px';
     li.innerHTML = el;
     ul.appendChild(li);
   }
