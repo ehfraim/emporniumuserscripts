@@ -28,7 +28,8 @@ async function loadImage(image) {
         }
         var result = await getImage(image.dataset.thumbUrl);
         image.src = image.dataset.thumbUrl;
-    } catch(error) {
+        image.parentNode.classList.remove('placeholder');
+    } catch (error) {
         image.src = 'https://xxx.freeimage.us/thumb.php?id=D9D0_5A1E8C7B';
         //image.src = 'https://fapping.empornium.sx/images/2017/11/29/Broken-Image.th.png'; // backup
     }
@@ -39,13 +40,13 @@ function getImage(url, imageToGet) {
     return new Promise((resolve, reject) => {
         var image = new Image();
         image.src = url;
-        image.onload = () => {resolve(imageToGet)}
-        image.onerror = () => {reject(new Error())}
+        image.onload = () => { resolve(imageToGet); };
+        image.onerror = () => { reject(new Error()); };
     });
 }
 
 
-var lazyImageObserver = new IntersectionObserver((entries, observer) => {
+var lazyImageObserver = new IntersectionObserver((entries) => {
     for (var entry of entries) {
         if (entry.isIntersecting) {
             var lazyImage = entry.target;
@@ -60,7 +61,7 @@ var lazyImageObserver = new IntersectionObserver((entries, observer) => {
             lazyImageObserver.unobserve(lazyImage);
         }
     }
-}, {rootMargin: "300px"}); //start loading image before it is visable
+}, { rootMargin: "400px" }); //start loading image before it is visable
 
 
 document.querySelectorAll('.preview-thumb').forEach(lazyImage => {
@@ -82,7 +83,7 @@ function addPlaceHolder(torrent) {
     placeholderImg.addEventListener('click', showModal, false);
 
     var previewDiv = document.createElement('div');
-    previewDiv.className = 'preview-div';
+    previewDiv.className = 'preview-div placeholder';
     previewDiv.appendChild(placeholderImg);
     var category = torrent.querySelector('.cats_col');
     if (!category) category = torrent.querySelector('.cats_cols');
@@ -124,7 +125,7 @@ function showModal() {
     pic.classList.add('modal-content');
     pic.style.willChange = 'transform, opacity';
 
-    pic.onload = function() {
+    pic.onload = function () {
         myModal.appendChild(pic);
         var bRect = img.getBoundingClientRect();
         pic.style.position = 'fixed';
@@ -167,6 +168,11 @@ previewStyle.appendChild(document.createTextNode(`
 .preview-div {
   display: inline-block;
   width: 150px;
+  transition: transform 0.05s ease-out;
+}
+
+.placeholder {
+  transform: scale(0.5);
 }
 
 .fullsize-loaded {
