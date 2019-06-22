@@ -20,7 +20,7 @@ const variationRegexes = [
   // framerate
   /\d+(?:\.\d+)?\s?fps/ig,
   // encoding
-  /h\.?265|x\.?265|hevc|hvec|h\.?264|x\.?264|re-encode/ig,
+  /h\.?265|x\.?265|hevc|hvec|h\.?264|x\.?264|re-?encode/ig,
   // filetype
   /mpeg4|3gp|mp4|wmv|mkv/ig,
   // VR
