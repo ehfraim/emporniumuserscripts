@@ -7,7 +7,7 @@
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version        6.2
+// @version        6.21
 // ==/UserScript==
 
 const variationRegexes = [
@@ -50,6 +50,7 @@ function combineTorrents(multiTorrent) {
     for (let i = 0; i < 10; i++) {
       var td = document.createElement('td');
       td.className = 'data-cell-' + i;
+      td.style.verticalAlign = 'top';
       tcells.push(td);
     }
     const mt = extractData(torrent);
@@ -220,10 +221,11 @@ function makeList(list) {
     const li = document.createElement('li');
     li.style.margin = '0';
     li.style.paddingTop = '5px';
-    li.style.paddingBottom = '5px';
+    li.style.paddingBottom = '8px';
     li.innerHTML = el;
     ul.appendChild(li);
   }
+  ul.children[ul.children.length -1].style.paddingBottom = '0';
   return ul;
 }
 
