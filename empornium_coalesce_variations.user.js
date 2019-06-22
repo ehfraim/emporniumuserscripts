@@ -7,7 +7,7 @@
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version        6.12
+// @version        6.2
 // ==/UserScript==
 
 const variationRegexes = [
@@ -39,6 +39,7 @@ const multipleTorrents = groupVariations();
 const combinedTorrents = combineTorrents(multipleTorrents);
 combinedTorrents.forEach(combined => combined.old.parentElement.insertBefore(combined.tableRow, combined.old));
 multipleTorrents.forEach(t => t.tableRows.forEach(r => r.remove()));
+document.querySelectorAll('.torrent').forEach(everyOtherRowAB);
 // console.timeEnd('Combining torrents');
 // console.timeEnd('Total time combining torrents');
 
@@ -252,4 +253,17 @@ function isUnique(list) {
     if (acc.includes(el)) return acc;
     return [el, ...acc];
   }, []).length === 1;
+}
+
+function everyOtherRowAB(row) {
+  const previousClassList = row.previousElementSibling.classList;
+  if (!previousClassList.contains('torrent')) return; // first row
+  if (row.classList.contains('redbar')) return; // pending removal
+  if (previousClassList.contains('rowa')) {
+    row.classList.remove('rowa');
+    row.classList.add('rowb');
+  } else {
+    row.classList.remove('rowb');
+    row.classList.add('rowa');
+  }
 }
