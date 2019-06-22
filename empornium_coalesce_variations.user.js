@@ -225,7 +225,7 @@ function makeList(list) {
     li.innerHTML = el;
     ul.appendChild(li);
   }
-  ul.children[ul.children.length -1].style.paddingBottom = '0';
+  ul.children[ul.children.length - 1].style.paddingBottom = '0';
   return ul;
 }
 
