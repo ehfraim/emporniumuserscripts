@@ -6,7 +6,7 @@
 // @include        https://www.empornium.tld/top10.php
 // @include        https://www.empornium.tld/torrents.php*
 // @exclude        https://www.empornium.tld/torrents.php?id=*
-// @version        6.5
+// @version        6.6
 // @grant          none
 // @run-at         document-body
 // ==/UserScript==
@@ -18,7 +18,7 @@ document.querySelectorAll('tr.torrent').forEach(torrent => {
 });
 
 
-async function loadImage(image) {    
+async function loadImage(image) {
     try {
         // make animated gifs static at first
         if (/\.gif/.test(image.dataset.thumbUrl)) {
@@ -166,8 +166,7 @@ previewStyle.appendChild(document.createTextNode(`
 
 .preview-div {
   display: inline-block;
-  width: 80px;
-  height: 80px;
+  width: 150px;
 }
 
 .fullsize-loaded {
