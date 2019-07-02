@@ -7,12 +7,12 @@
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version        6.23
+// @version        6.24
 // ==/UserScript==
 
 const variationRegexes = [
   // resolutions
-  /\d+p(?:\d+)?|sd(?!\w)|hd(?!\w)|uhd|fullhd|ultrahd|standard|\b[1-9]{1}k(?!\w)|\d+p?x\d+p?\s?(?:px)?|480|720|1080|(?:\d+ ?MP)/ig,
+  /\d+p(?:\d+)?|sd(?!\w)|hd(?!\w)|4kuhd|uhd|fullhd|ultrahd|standard|\b[1-9]{1}k(?!\w)|\d+p?x\d+p?\s?(?:px)?|480|720|1080|(?:\d+ ?MP)/ig,
   // bitrate
   /(?:\d+(?:\.\d+)?\s?(?:k|m)?bps)|mobile-(?:high|medium|low)|mobile|(?:low|medium|high) ?bitrate/ig,
   // extras
@@ -24,7 +24,7 @@ const variationRegexes = [
   // filetype
   /mpeg4|3gp|mp4|wmv|mkv/ig,
   // VR
-  /(?:desktop|gearvr\/?daydream|gear|daydream|smartphone|oculus\/?(?:vive)(?: rift)?|oculus(?: go)?|PlayStationVR PS4|playstation|Google Cardboard)(?: ?vr)?/ig,
+  /(?:desktop|gearvr\/?daydream|gear|daydream|smartphone|oculus\/?(?:vive)(?: rift)?|oculus\/?(?: ?go)?|PlayStationVR PS4|playstation|Google Cardboard)(?: ?vr)?/ig,
   // reported torrents
   / \/ Reported/i
 ];
