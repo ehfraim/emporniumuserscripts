@@ -5,19 +5,32 @@
 // @author       ephraim
 // @include      https://www.empornium.me/torrents.php*
 // @include      https://www.empornium.sx/torrents.php*
-// @version      2
+// @version      3
 // @grant        GM_setValue
 // @grant        GM_getValue
 // ==/UserScript==
 
 
-var DBName = 'empSavedSearches';
+var DB_NAME = 'empSavedSearches';
+var KEEP_OPEN_CHECKBOX_NAME = 'empSavedSearchesKeepOpen';
 var searchDB = [];
+
 var searchBox = document.getElementById('search_box');
 if (!searchBox) return; // not on search page
 var tagList = document.getElementById('taglist');
+
+var saveCheckbox = document.createElement('input');
+saveCheckbox.type = 'checkbox';
+saveCheckbox.id = 'searchSaveCheckbox';
+saveCheckbox.checked = GM_getValue(KEEP_OPEN_CHECKBOX_NAME, false);
+saveCheckbox.addEventListener('click', checkboxListener);
+var saveCheckboxLabel = document.createElement('label');
+saveCheckboxLabel.id = 'searchSaveCheckboxLabel';
+saveCheckboxLabel.innerText = 'Keep saved searches visable';
+saveCheckboxLabel.appendChild(saveCheckbox);
+
 var viewSearchesButton = document.createElement('a');
-viewSearchesButton.text = '(View saved searches)';
+viewSearchesButton.text = saveCheckbox.checked ? '(Hide saved searches)' : '(View saved searches)';
 viewSearchesButton.href = '#';
 viewSearchesButton.addEventListener('click', toggleViewSavedSearches);
 var wrapper = document.createElement('span');
@@ -30,14 +43,37 @@ var saveButton = document.createElement('input');
 saveButton.type = 'button';
 saveButton.value = 'Save search 💾';
 saveButton.addEventListener('click', saveButtonListener);
-var brs = searchButtons.querySelectorAll('br');
-searchButtons.insertBefore(saveButton, brs[brs.length - 1]);
+saveButton.style.marginTop = '10px';
+saveButton.style.display = 'block';
+searchButtons.appendChild(saveButton);
+
+var nameField = document.createElement('input');
+nameField.type = 'text';
+nameField.placeholder = 'Search name';
+nameField.style.width = '7em';
+nameField.style.display = 'block';
+nameField.id = 'searchSaveName';
+nameField.name = 'searchname';
+searchButtons.appendChild(nameField);
+
+
+var searchDrawer = document.createElement('div');
+searchDrawer.id = 'searchSaveDrawer';
+if (!saveCheckbox.checked) searchDrawer.className = 'hidden';
+searchDrawer.appendChild(saveCheckboxLabel);
+tagList.parentElement.insertBefore(searchDrawer, tagList);
+
 createSearchList();
+
+
+function checkboxListener(e) {
+    GM_setValue(KEEP_OPEN_CHECKBOX_NAME, e.target.checked);
+}
 
 
 function toggleViewSavedSearches(e) {
     e.preventDefault();
-    var classList = document.getElementById('savedSearches').classList;
+    var classList = document.getElementById('searchSaveDrawer').classList;
     e.target.textContent = classList.contains('hidden') ? '(Hide saved searches)' : '(View saved searches)';
     classList.toggle('hidden');
 }
@@ -50,27 +86,27 @@ function saveSearch() {
         textInputs: [
             {
                 name: 'searchtext',
-                desc: 'Search terms'
+                desc: 'search terms'
             },
             {
                 name: 'title',
-                desc: 'Title'
+                desc: 'title'
             },
             {
                 name: 'sizeall',
-                desc: 'Size'
+                desc: 'size'
             },
             {
                 name: 'sizerange',
-                desc: 'Size range'
+                desc: 'size range'
             },
             {
                 name: 'filelist',
-                desc: 'File list'
+                desc: 'file list'
             },
             {
                 name: 'taglist',
-                desc: 'Tag list'
+                desc: 'tag list'
             }
         ],
         checkBoxes: [
@@ -90,9 +126,9 @@ function saveSearch() {
         var field = searchBox.querySelector(`[name=${box.name}`);
         box.checked = field.checked;
     });
-    search.title = search.textInputs[0].value || search.textInputs[5].value;
+    search.title = searchBox.querySelector(`#searchSaveName`).value || search.textInputs[0].value || search.textInputs[1].value || search.textInputs[5].value || 'Unknown search';
     searchDB.push(search);
-    GM_setValue(DBName, JSON.stringify(searchDB));
+    GM_setValue(DB_NAME, JSON.stringify(searchDB));
     rebuildSearchList();
 }
 
@@ -142,7 +178,7 @@ function appendListener(e) {
 function deleteSearch(searchElement) {
     var index = parseInt(searchElement.parentElement.dataset.index);
     searchDB.splice(index, 1);
-    GM_setValue(DBName, JSON.stringify(searchDB));
+    GM_setValue(DB_NAME, JSON.stringify(searchDB));
     rebuildSearchList();
 }
 
@@ -156,7 +192,7 @@ function deleteListener(e) {
 function createSearchList() {
     var searchList = document.createElement('ul');
     searchList.id = 'searchList';
-    searchDB = JSON.parse(GM_getValue(DBName, '[]'));
+    searchDB = JSON.parse(GM_getValue(DB_NAME, '[]'));
 
     var index = 0;
     for (var search of searchDB) {
@@ -188,21 +224,25 @@ function createSearchList() {
         searchList.appendChild(item);
         index++;
     }
-    var searches = document.createElement('div');
-    searches.id = 'savedSearches';
-    searches.classList.add('hidden');
-    searches.appendChild(searchList);
-    tagList.parentElement.insertBefore(searches, tagList);
+    searchDrawer.appendChild(searchList);
+    // var searches = document.createElement('div');
+    // searches.id = 'savedSearches';
+    // searches.classList.add('hidden');
+    // searches.appendChild(searchList);
+    // tagList.parentElement.insertBefore(searches, tagList);
 
-    return searches;
+    // return searches;
 }
 
 
 function rebuildSearchList() {
-    var savedSearches = document.getElementById('savedSearches');
-    var searchesClassList = savedSearches.classList;
-    savedSearches.remove();
-    createSearchList().classList = searchesClassList;
+    // var savedSearches = document.getElementById('savedSearches');
+    // var searchesClassList = savedSearches.classList;
+    // savedSearches.remove();
+    // createSearchList().classList = searchesClassList;
+    var searchList = document.getElementById('searchList');
+    searchList.remove();
+    createSearchList();
 }
 
 
@@ -266,10 +306,20 @@ style.innerHTML = `
 }
 
 .searchItem {
-    margin: 5px 0 5px 0;
+    margin: 3px 0 3px 0;
     background-color: #EFF3F6;
     border-radius: 5px;
     padding: 3px;
+    display: inline-block;
+    width: 100%;
+}
+
+#searchSaveCheckboxLabel {
+    margin: 10px 0 10px 0;
+}
+
+#searchSaveCheckbox {
+    margin-left: 5px;
 }
 `;
 document.head.appendChild(style);
