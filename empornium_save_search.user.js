@@ -5,7 +5,7 @@
 // @author       ephraim
 // @include      https://www.empornium.me/torrents.php*
 // @include      https://www.empornium.sx/torrents.php*
-// @version      1
+// @version      2
 // @grant        GM_setValue
 // @grant        GM_getValue
 // ==/UserScript==
@@ -38,11 +38,7 @@ createSearchList();
 function toggleViewSavedSearches(e) {
     e.preventDefault();
     var classList = document.getElementById('savedSearches').classList;
-    if (classList.contains('hidden')) {
-        e.target.textContent = '(Hide saved searches)';
-    } else {
-        e.target.textContent = '(View saved searches)';
-    }
+    e.target.textContent = classList.contains('hidden') ? '(Hide saved searches)' : '(View saved searches)';
     classList.toggle('hidden');
 }
 
@@ -119,9 +115,27 @@ function restoreSearch(searchElement) {
 }
 
 
-function restoreSaveListener(e) {
+function restoreListener(e) {
     e.preventDefault();
     restoreSearch(e.target);
+}
+
+function appendSearch(searchElement) {
+    var savedSearch = searchDB[parseInt(searchElement.parentElement.dataset.index)];
+    savedSearch.textInputs.forEach(input => {
+        var field = searchBox.querySelector(`[name=${input.name}`);
+        if (field.name === 'sizerange') return;
+        field.value = field.value + ' ' + input.value;
+    });
+    savedSearch.checkBoxes.forEach(box => {
+        var field = searchBox.querySelector(`[name=${box.name}`);
+        field.checked = box.checked;
+    });
+}
+
+function appendListener(e) {
+    e.preventDefault();
+    appendSearch(e.target);
 }
 
 
@@ -150,11 +164,17 @@ function createSearchList() {
         searchName.textContent = search.title;
         searchName.title = getDescription(search);
         searchName.href = '#';
-        searchName.addEventListener('click', restoreSaveListener);
+        searchName.addEventListener('click', restoreListener);
         searchName.className = 'searchName';
 
+        var appendButton = document.createElement('span');
+        appendButton.className = 'saveButton appendButton';
+        appendButton.textContent = '➕';
+        appendButton.title = 'Append this search';
+        appendButton.addEventListener('click', appendListener);
+
         var deleteButton = document.createElement('span');
-        deleteButton.className = 'deleteButton';
+        deleteButton.className = 'saveButton deleteButton';
         deleteButton.textContent = '❌';
         deleteButton.title = 'Delete this search';
         deleteButton.addEventListener('click', deleteListener);
@@ -163,6 +183,7 @@ function createSearchList() {
         item.className = 'searchItem';
         item.dataset.index = index;
         item.appendChild(searchName);
+        item.appendChild(appendButton);
         item.appendChild(deleteButton);
         searchList.appendChild(item);
         index++;
@@ -208,32 +229,40 @@ style.innerHTML = `
     text-overflow: ellipsis;
     display: inline-block;
     white-space: nowrap;
-    max-width: calc(100% - 20px);
+    max-width: calc(100% - 40px);
     width: 100%;
     vertical-align: middle;
 }
 
-.deleteButton {
+.saveButton {
     opacity: 0;
     vertical-align: middle;
-    color: #e40303;
     filter: drop-shadow(1px 2px 1px #6f6a6a);
 }
 
-.deleteButton:hover {
+.saveButton:hover {
     filter: unset;
     cursor:pointer;
 }
 
-.deleteButton:active {
+.saveButton:active {
     border-width: 1px;
     border-style: inset;
     border-color: #929292;
     border-radius: 3px;
 }
 
-.searchItem:hover .deleteButton {
+.searchItem:hover .saveButton {
     opacity: 1;
+}
+
+.deleteButton {
+    color: #e40303;
+}
+
+.appendButton {
+    color: #38cb38;
+    margin-right: 8px;
 }
 
 .searchItem {
