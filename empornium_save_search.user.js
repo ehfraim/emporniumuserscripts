@@ -5,7 +5,7 @@
 // @author       ephraim
 // @include      https://www.empornium.me/torrents.php*
 // @include      https://www.empornium.sx/torrents.php*
-// @version      3
+// @version      4
 // @grant        GM_setValue
 // @grant        GM_getValue
 // ==/UserScript==
@@ -148,6 +148,7 @@ function restoreSearch(searchElement) {
         var field = searchBox.querySelector(`[name=${box.name}`);
         field.checked = box.checked;
     });
+    document.getElementById('search_form').submit();
 }
 
 
@@ -225,21 +226,10 @@ function createSearchList() {
         index++;
     }
     searchDrawer.appendChild(searchList);
-    // var searches = document.createElement('div');
-    // searches.id = 'savedSearches';
-    // searches.classList.add('hidden');
-    // searches.appendChild(searchList);
-    // tagList.parentElement.insertBefore(searches, tagList);
-
-    // return searches;
 }
 
 
 function rebuildSearchList() {
-    // var savedSearches = document.getElementById('savedSearches');
-    // var searchesClassList = savedSearches.classList;
-    // savedSearches.remove();
-    // createSearchList().classList = searchesClassList;
     var searchList = document.getElementById('searchList');
     searchList.remove();
     createSearchList();
@@ -259,9 +249,9 @@ function getDescription(search) {
 var style = document.createElement('style');
 style.innerHTML = `
 #searchList {
-    list-style: none;
     column-count: 5;
-    clear: both;
+    column-rule: dotted thin #d8d8d8;
+    column-gap: 2em;
 }
 
 .searchName {
@@ -307,11 +297,10 @@ style.innerHTML = `
 
 .searchItem {
     margin: 3px 0 3px 0;
-    background-color: #EFF3F6;
-    border-radius: 5px;
+    background-image: linear-gradient(to bottom right, #eff3f6, #d4dfea);
+    border-radius: 6px;
     padding: 3px;
-    display: inline-block;
-    width: 100%;
+    display: block;
 }
 
 #searchSaveCheckboxLabel {
