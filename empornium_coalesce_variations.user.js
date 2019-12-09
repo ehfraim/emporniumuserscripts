@@ -7,20 +7,20 @@
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version        6.24
+// @version        6.25
 // ==/UserScript==
 
 const variationRegexes = [
   // resolutions
-  /\d+p(?:\d+)?|sd(?!\w)|hd(?!\w)|4kuhd|uhd|fullhd|ultrahd|standard|\b[1-9]{1}k(?!\w)|\d+p?x\d+p?\s?(?:px)?|480|720|1080|(?:\d+ ?MP)/ig,
+  /\d+ ?px|\d+p(?:\d+)?|sd(?!\w)|hd(?!\w)|4kuhd|uhd|fullhd|ultrahd|standard|\b[1-9]{1}k(?!\w)|\d+p?x\d+p?\s?(?:px)?|480lp|480|720|1080|(?:\d+ ?MP)/ig,
   // bitrate
   /(?:\d+(?:\.\d+)?\s?(?:k|m)?bps)|mobile-(?:high|medium|low)|mobile|(?:low|medium|high) ?bitrate/ig,
   // extras
-  /bts|(hq )*image *set|images|(?:with )?picset|\+?pictures|\+?photoset|pics|pic set|x\d+|uhq|\d+\s?pics|requested|request|req/ig,
+  /bts|(hq )*image *set|images|(?:with )?picset|\+?pictures|\+?photoset|pics|pic set|x\d+|uhq|\d+\s?pics|requested|request|req|(first|second) (camera|cam)|best cut/ig,
   // framerate
   /\d+(?:\.\d+)?\s?fps/ig,
   // encoding
-  /h\.?265|x\.?265|hevc|hvec|h\.?264|x\.?264|re-?encode/ig,
+  /h\.?265|x\.?265|hevc|hvec|h\.?264|x\.?264|re-?encode|reencoded|rencoded|lower bitrate/ig,
   // filetype
   /mpeg4|3gp|mp4|wmv|mkv/ig,
   // VR
@@ -131,7 +131,7 @@ function extractVariation(title) {
       cleanTitle = cleanTitle.replace(match, '');
     }
   }
-  cleanTitle = cleanTitle.replace(/\!+|\+|,|\&| \/$|\[[\s\W]*\]|\(\s?\)/g, '').replace(/\[.?\]|\(.?\)/g, '');
+  cleanTitle = cleanTitle.replace(/\!+|\/$|\[[\s\W]*\]|\(\s?\)/g, '').replace(/\[.?\]|\(.?\)/g, '').replace(/[\(\{\[]+\s*[\)\]\}]+/, '');;
   cleanTitle = cleanTitle.replace(/\s+/g, ' ').trim().replace(/ \.|( \-|in|freeleech|\[req\])$/i, '').trim();
   if (variations.length < 1) variations.push('other');
   return { variation: '[' + variations.join(', ') + ']', cleanTitle: cleanTitle };
