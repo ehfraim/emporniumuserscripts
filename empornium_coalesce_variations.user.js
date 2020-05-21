@@ -20,11 +20,11 @@ const variationRegexes = [
   // framerate
   /\d+(?:\.\d+)?\s?fps/ig,
   // encoding
-  /h\.?265|x\.?265|hevc|hvec|h\.?264|x\.?264|re-?encode|reencoded|rencoded|lower bitrate/ig,
+  /h\.?265|x\.?265|hevc|hvec|h\.?264|x\.?264|re-?encode|reencoded|rencoded|lower bitrate|lq|hq/ig,
   // filetype
   /mpeg4|3gp|mp4|wmv|mkv/ig,
   // VR
-  /(?:desktop|gearvr\/?daydream|gear|daydream|smartphone|oculus\/?(?:vive)(?: rift)?|oculus\/?(?: ?go)?|PlayStationVR PS4|playstation|Google Cardboard)(?: ?vr)?/ig,
+  /(?:desktop|gearvr\/?daydream|gear|daydream(?: view)|smartphone|mobile|oculus\/?(?:vive)(?: rift)?|oculus\/?(?: ?go)?|vive|PlayStationVR PS4|playstation|Google Cardboard|windows mixed reality)(?: ?vr)?/ig,
   // reported torrents
   / \/ Reported/i
 ];
