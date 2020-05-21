@@ -7,7 +7,7 @@
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version        6.25
+// @version        7
 // ==/UserScript==
 
 const variationRegexes = [
@@ -287,7 +287,7 @@ empStyle.innerHTML = `
     text-align: right;
   }
   .variation_newtorrent {
-    float:none;
+    float:none !important;
     margin-right: 4px;
   }
   .variation_list {
