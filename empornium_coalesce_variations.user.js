@@ -50,7 +50,6 @@ function combineTorrents(multiTorrent) {
     for (let i = 0; i < 10; i++) {
       var td = document.createElement('td');
       td.className = 'data-cell-' + i;
-      td.style.verticalAlign = 'top';
       tcells.push(td);
     }
     const mt = extractData(torrent);
@@ -62,22 +61,21 @@ function combineTorrents(multiTorrent) {
     nameDiv.appendChild(title);
 
     const infoUl = document.createElement('ul');
-    infoUl.style.cssText = 'display: inline-flex; flex-direction: column; float: right; list-style: none; text-align: right;';
+    infoUl.className = 'infoList';
     for (let i = 0; i < mt.variations.length; i++) {
       const li = document.createElement('li');
       if (mt.newTorrent[i]) {
-        mt.newTorrent[i].style.cssText = 'float:none; margin-right: 4px';
+        mt.newTorrent[i].classList.add('variation_newtorrent');
         li.appendChild(mt.newTorrent[i]);
       }
       const variationName = document.createElement('a');
       variationName.textContent = mt.variations[i];
       variationName.href = mt.hrefs[i];
       variationName.title = mt.headings[i];
-      variationName.style.marginRight = '4px';
+      variationName.className = 'variationLink';
       li.appendChild(variationName);
       li.appendChild(mt.info[i]);
-      li.style.marginRight = '0';
-      li.style.marginBottom = '5px';
+      li.className = 'torrent_variations';
       infoUl.appendChild(li);
     }
     nameDiv.appendChild(infoUl);
@@ -215,13 +213,10 @@ function extractData(bunch) {
 
 function makeList(list) {
   const ul = document.createElement('ul');
-  ul.style.listStyle = 'none';
-  ul.className = 'nobr';
+  ul.className = 'nobr variation_list';
   for (const el of list) {
     const li = document.createElement('li');
-    li.style.margin = '0';
-    li.style.paddingTop = '5px';
-    li.style.paddingBottom = '8px';
+    li.className = 'variation_item';
     li.innerHTML = el;
     ul.appendChild(li);
   }
@@ -269,3 +264,38 @@ function everyOtherRowAB(row) {
     row.classList.add('rowa');
   }
 }
+
+var empStyle = document.createElement('style');
+empStyle.type = 'text/css';
+empStyle.innerHTML = `
+  .variationLink {
+    margin-right: 4px;
+    display: inline-block;
+    overflow: hidden;
+    max-width: 20ch;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .torrent_variations {
+    margin: 0 0 5px 0;
+  }
+  .infoList {
+    display: inline-flex;
+    flex-direction: column;
+    float: right;
+    list-style: none;
+    text-align: right;
+  }
+  .variation_newtorrent {
+    float:none;
+    margin-right: 4px;
+  }
+  .variation_list {
+    list-style: none;
+  }
+  .variation_item {
+    margin: 0;
+    padding: 5px 2px 8px 0;
+  }
+`;
+document.head.appendChild(empStyle);
