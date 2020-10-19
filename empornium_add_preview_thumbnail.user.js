@@ -6,28 +6,30 @@
 // @include        https://www.empornium.tld/top10.php
 // @include        https://www.empornium.tld/torrents.php*
 // @exclude        https://www.empornium.tld/torrents.php?id=*
-// @version        7
+// @version        7.1
 // @grant          none
 // @run-at         document-body
 // ==/UserScript==
 
 var preloadFullSizeImages = false;
-var previewSize = 100;
+var previewSize = 120;
+var playGifs = true;
 
 
 async function loadImage(pdiv) {
     try {
         // make animated gifs static at first
+        var gifThumb
         if (/\.gif/.test(pdiv.dataset.thumbUrl)) {
-            var gifThumb = pdiv.dataset.thumbUrl.replace('.gif', '.th.gif');
+            gifThumb = pdiv.dataset.thumbUrl.replace('.gif', '.th.gif');
             pdiv.style.backgroundImage = `url(${gifThumb})`;
-            return;
+            if(!playGifs) return;
         } else if (/&gif/.test(pdiv.dataset.thumbUrl)) { // freeimage animated gif
-            var gifThumb = pdiv.dataset.thumbUrl.replace('&gif', '');
+            gifThumb = pdiv.dataset.thumbUrl.replace('&gif', '');
             pdiv.style.backgroundImage = `url(${gifThumb})`;
-            return;
+            if(!playGifs) return;
         }
-        // var result = await getImage(pdiv.dataset.thumbUrl);
+        var result = await getImage(pdiv.dataset.thumbUrl);
         pdiv.style.backgroundImage = `url(${pdiv.dataset.thumbUrl})`;
         pdiv.classList.remove('placeholder');
     } catch (error) {
@@ -164,13 +166,13 @@ previewStyle.appendChild(document.createTextNode(`
     position: relative;
     display: block;
     height: ${previewSize}px;
-    width: ${previewSize+20}px;
+    width: ${previewSize*1.4+30}px;
 }
 
 .preview-category {
     position: absolute;
     left: 0;
-    height: ${previewSize}px;
+    height: 95%;
 }
 
 .preview-div {
@@ -178,10 +180,12 @@ previewStyle.appendChild(document.createTextNode(`
     left: 0;
     background-size: cover;
     background-repeat: no-repeat;
-    background-image: url("https://www.empornium.me/favicon.ico");
-    width: ${previewSize}px;
-    height: ${previewSize}px;
-    margin-left: 20px;
+    background-position: center;
+    background-image: url('https://www.empornium.me/favicon.ico');
+    background-color: #050505;
+    height: 95%;
+    width: ${previewSize*1.4}px;
+    margin-left: 13%;
     cursor: zoom-in;
 }
 
@@ -219,7 +223,7 @@ previewStyle.appendChild(document.createTextNode(`
 }
 
 .preview-category > a > img {
-    height: ${previewSize}px;
+    height: 100%;
     }
 `));
 document.head.appendChild(previewStyle);
