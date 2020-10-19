@@ -6,31 +6,33 @@
 // @include        https://www.empornium.tld/top10.php
 // @include        https://www.empornium.tld/torrents.php*
 // @exclude        https://www.empornium.tld/torrents.php?id=*
-// @version        6.6
+// @version        7
 // @grant          none
 // @run-at         document-body
 // ==/UserScript==
 
-var preloadFullSizeImages = true;
-
-document.querySelectorAll('tr.torrent').forEach(torrent => {
-    addPlaceHolder(torrent);
-});
+var preloadFullSizeImages = false;
+var previewSize = 100;
 
 
-async function loadImage(image) {
+async function loadImage(pdiv) {
     try {
         // make animated gifs static at first
-        if (/\.gif/.test(image.dataset.thumbUrl)) {
-            image.src = image.dataset.thumbUrl.replace('.gif', '.th.gif');
-        } else if (/&gif/.test(image.dataset.thumbUrl)) { // freeimage animated gif
-            image.src = image.dataset.thumbUrl.replace('&gif', '');
+        if (/\.gif/.test(pdiv.dataset.thumbUrl)) {
+            var gifThumb = pdiv.dataset.thumbUrl.replace('.gif', '.th.gif');
+            pdiv.style.backgroundImage = `url(${gifThumb})`;
+            return;
+        } else if (/&gif/.test(pdiv.dataset.thumbUrl)) { // freeimage animated gif
+            var gifThumb = pdiv.dataset.thumbUrl.replace('&gif', '');
+            pdiv.style.backgroundImage = `url(${gifThumb})`;
+            return;
         }
-        var result = await getImage(image.dataset.thumbUrl);
-        image.src = image.dataset.thumbUrl;
-        image.parentNode.classList.remove('placeholder');
+        // var result = await getImage(pdiv.dataset.thumbUrl);
+        pdiv.style.backgroundImage = `url(${pdiv.dataset.thumbUrl})`;
+        pdiv.classList.remove('placeholder');
     } catch (error) {
-        image.src = 'https://xxx.freeimage.us/thumb.php?id=D9D0_5A1E8C7B';
+        pdiv.style.backgroundImage = `url(https://xxx.freeimage.us/thumb.php?id=D9D0_5A1E8C7B)`;
+        //pdiv.src = 'https://xxx.freeimage.us/thumb.php?id=D9D0_5A1E8C7B';
         //image.src = 'https://fapping.empornium.sx/images/2017/11/29/Broken-Image.th.png'; // backup
     }
 }
@@ -57,38 +59,27 @@ var lazyImageObserver = new IntersectionObserver((entries) => {
                     thumb.classList.add('fullsize-loaded');
                 });
             }
-            lazyImage.classList.remove('lazy-img');
+            lazyImage.classList.remove('placeholder');
             lazyImageObserver.unobserve(lazyImage);
         }
     }
-}, { rootMargin: "400px" }); //start loading image before it is visable
-
-
-document.querySelectorAll('.preview-thumb').forEach(lazyImage => {
-    lazyImageObserver.observe(lazyImage);
-});
+}, { rootMargin: "400px" }); //start loading image before it is visible
 
 
 function addPlaceHolder(torrent) {
-    var torrentId = torrent.querySelector('a[href*="/torrents.php?id"]').href.match(/id=(\d+)/)[1];
-
-    var placeholderImg = new Image();
-    placeholderImg.src = 'https://www.empornium.me/favicon.ico';
-    placeholderImg.className = 'preview-thumb lazy-img';
-    placeholderImg.id = 'preview-' + torrentId;
-
+    var torrentId = torrent.querySelector('a[href*="/torrents.php?id"]').search.slice(4);
     var imageUrl = getImgUrl(torrent);
-    placeholderImg.dataset.thumbUrl = getThumbURL(imageUrl);
-    placeholderImg.dataset.fullImage = imageUrl.replace(/\.th\.|\.md\./i, '.');
-    placeholderImg.addEventListener('click', showModal, false);
 
     var previewDiv = document.createElement('div');
     previewDiv.className = 'preview-div placeholder';
-    previewDiv.appendChild(placeholderImg);
-    var category = torrent.querySelector('.cats_col');
-    if (!category) category = torrent.querySelector('.cats_cols');
-    category.children[0].style.display = "inline";
-    category.style.whiteSpace = "nowrap";
+    previewDiv.id = 'preview-' + torrentId;
+    previewDiv.dataset.thumbUrl = getThumbURL(imageUrl);
+    previewDiv.dataset.fullImage = imageUrl.replace(/\.th\.|\.md\./i, '.');
+    previewDiv.addEventListener('click', showModal, false);
+
+    var category = torrent.querySelector('.cats_col, .cats_cols');
+    category.classList.add('preview-column');
+    category.firstElementChild.classList.add('preview-category');
     category.appendChild(previewDiv);
 }
 
@@ -157,18 +148,41 @@ function hideModal() {
     document.getElementById('blurbox').remove();
 }
 
+/****   main  ****/
+document.querySelectorAll('tr.torrent').forEach(torrent => {
+    addPlaceHolder(torrent);
+});
+
+document.querySelectorAll('.placeholder').forEach(lazyImage => {
+    lazyImageObserver.observe(lazyImage);
+});
+
 var previewStyle = document.createElement('style');
 previewStyle.type = 'text/css';
 previewStyle.appendChild(document.createTextNode(`
-.preview-thumb {
-  width: 100%;
-  cursor: zoom-in;
+.preview-column {
+    position: relative;
+    display: block;
+    height: ${previewSize}px;
+    width: ${previewSize+20}px;
+}
+
+.preview-category {
+    position: absolute;
+    left: 0;
+    height: ${previewSize}px;
 }
 
 .preview-div {
-  display: inline-block;
-  width: 150px;
-  transition: transform 0.05s ease-out;
+    position: absolute;
+    left: 0;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-image: url("https://www.empornium.me/favicon.ico");
+    width: ${previewSize}px;
+    height: ${previewSize}px;
+    margin-left: 20px;
+    cursor: zoom-in;
 }
 
 .placeholder {
@@ -203,5 +217,9 @@ previewStyle.appendChild(document.createTextNode(`
   filter: brightness(0.2) grayscale(0.7) blur(1px);
   transition: filter 0.3s linear;
 }
+
+.preview-category > a > img {
+    height: ${previewSize}px;
+    }
 `));
 document.head.appendChild(previewStyle);
