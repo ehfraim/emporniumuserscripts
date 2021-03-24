@@ -3,18 +3,18 @@
 // @author         ephraim
 // @namespace      empornium
 // @description    Combines torrents of different variations to one row
-// @include        /https?://www\.empornium\.(me|sx)/(torrents|user)\.php/
-// @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?id=/
-// @exclude        /https?://www\.empornium\.(me|sx)/torrents\.php\?action=notify/
+// @include        /https?://www\.empornium\.(is|me|sx)/(torrents|user)\.php/
+// @exclude        /https?://www\.empornium\.(is|me|sx)/torrents\.php\?id=/
+// @exclude        /https?://www\.empornium\.(is|me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version        7
+// @version        7.1
 // ==/UserScript==
 
 const variationRegexes = [
   // resolutions
   /\d+ ?px|\d+p(?:\d+)?|sd(?!\w)|hd(?!\w)|4kuhd|uhd|fullhd|ultrahd|standard|\b[1-9]{1}k(?!\w)|\d+p?x\d+p?\s?(?:px)?|480lp|480|720|1080|(?:\d+ ?MP)/ig,
   // bitrate
-  /(?:\d+(?:\.\d+)?\s?(?:k|m)?bps)|mobile-(?:high|medium|low)|mobile|(?:low|medium|high) ?bitrate/ig,
+  /(?:\d+(?:\.\d+)?\s?(?:k|m)?bps)|mobile-(?:high|medium|low)|mobile|(?:low|medium|high|higher) ?bitrate/ig,
   // extras
   /bts|(hq )*image *set|images|(?:with )?picset|\+?pictures|\+?photoset|pics|pic set|x\d+|uhq|\d+\s?pics|requested|request|req|(first|second) (camera|cam)|best cut/ig,
   // framerate
@@ -24,7 +24,7 @@ const variationRegexes = [
   // filetype
   /mpeg4|3gp|mp4|wmv|mkv/ig,
   // VR
-  /(?:desktop|gearvr\/?daydream|gear|daydream(?: view)|smartphone|mobile|oculus\/?(?:vive)(?: rift)?|oculus\/?(?: ?go)?|vive|PlayStationVR PS4|playstation|Google Cardboard|windows mixed reality)(?: ?vr)?/ig,
+  /(?:desktop|gearvr\/?daydream|gear|daydream(?: view)|smartphone|mobile|oculus\/?(?:vive)(?: rift)?|oculus\/?(?: ?go)?|go \dk|vive|PlayStationVR PS4|playstation|Google Cardboard|windows mixed reality)(?: ?vr)?/ig,
   // reported torrents
   / \/ Reported/i
 ];
