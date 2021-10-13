@@ -6,6 +6,7 @@
 // @namespace    empornium
 // @match        https://www.empornium.is/torrents.php?id=*
 // @match        https://www.empornium.me/torrents.php?id=*
+// @match        https://www.empornium.sx/torrents.php?id=*
 // @grant        none
 // ==/UserScript==
 
