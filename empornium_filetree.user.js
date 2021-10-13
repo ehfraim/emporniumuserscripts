@@ -3,6 +3,7 @@
 // @version      1
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
+// @namespace    empornium
 // @match        https://www.empornium.is/torrents.php?id=*
 // @match        https://www.empornium.me/torrents.php?id=*
 // @grant        none
