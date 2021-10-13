@@ -114,7 +114,7 @@ function makeFolderDom(folder) {
     folderDetails.addEventListener('click', toggleCollapsed);
     var folderList = ce('ul', 'folder_list');
     for (var f of folder.folders) {
-        var foldi = ce('li', 'folder_item tree_item');
+        var foldi = ce('li', 'folder_item');
         foldi.appendChild(makeFolderDom(f));
         folderList.append(foldi);
     }
@@ -122,7 +122,7 @@ function makeFolderDom(folder) {
 
     var fileList = ce('ul', 'file_list');
     for (var file of folder.files) {
-        var filei = ce('li', 'file_item tree_item');
+        var filei = ce('li', 'file_item');
         filei.innerHTML = `<div class="icon_stack"><i class="font_icon file_icons ${getFileType(file.name)}"></i></div><span class="file_name">${file.name}</span><span class="file_size">${file.size}</span>`;
         fileList.append(filei);
     }
@@ -139,11 +139,22 @@ function toggleCollapsed(e) {
 }
 
 
+function createTree() {
+    var treeContainer = ce('div', 'tree_container');
+    treeContainer.append(makeFolderDom(root));
+    var firstFolder = treeContainer.querySelector('.folder_closed');
+    firstFolder.classList.remove('folder_closed');
+    firstFolder.classList.add('folder_open');
+    treeContainer.querySelector('.collapsed').classList.toggle('collapsed');
+
+    return treeContainer;
+}
+
+
 function list2Tree() {
     var tabl = fileList.querySelector('table');
     var rows = [...tabl.rows];
 
-    var root = {};
     root.name = rows[0].innerText.trim();
     root.files = rows.slice(2).map(r => {
         var tdata = r.querySelectorAll('td');
@@ -156,17 +167,81 @@ function list2Tree() {
 
     root = tree(root);
     tabl.style.display = 'none';
-    var treeContainer = ce('div', 'tree_container');
-    treeContainer.append(makeFolderDom(root));
-    treeContainer.querySelector('.collapsed').classList.toggle('collapsed');
+    var header = ce('div', 'tree_header colhead');
+    var headerName = ce('span', 'header_name sort_ascending');
+    headerName.innerText = 'Name';
+    headerName.addEventListener('click', sortTree);
+    var headerSize = ce('span', 'header_size');
+    headerSize.innerText = 'Size';
+    headerSize.addEventListener('click', sortTree);
+    headerName.dataset.other = 'header_size';
+    headerSize.dataset.other = 'header_name';
+    header.append(headerName, headerSize);
+    fileList.append(header);
+
+    var treeContainer = createTree();
     fileList.append(treeContainer);
     fileList.classList.remove('hidden');
+}
+
+function sortFolderSize(folder, ascending) {
+    var direction = ascending ? 1 : -1;
+    folder.files.sort((a, b) => {
+        return direction * (b.byteSize - a.byteSize);
+    });
+    folder.folders.sort((a, b) => {
+        return direction * (b.byteSize - a.byteSize);
+    });
+    folder.folders.forEach(f => {
+        sortFolderSize(f, ascending);
+    });
+}
+
+
+function sortFolderName(folder, ascending) {
+    var direction = ascending ? -1 : 1;
+    folder.files.sort((a, b) => {
+        return direction * (a.name.localeCompare(b.name));
+    });
+    folder.folders.sort((a, b) => {
+        return direction * (a.name.localeCompare(b.name));
+    });
+    folder.folders.forEach(f => {
+        sortFolderName(f, ascending);
+    });
+}
+
+
+function sortTree() {
+    var ascending = this.classList.contains('sort_ascending');
+    if (ascending) {
+        this.classList.add('sort_descending');
+        this.classList.remove('sort_ascending');
+    } else {
+        this.classList.add('sort_ascending');
+        this.classList.remove('sort_descending');
+    }
+    var other = this.parentElement.querySelector(`.${this.dataset.other}`);
+    other.classList.remove('sort_ascending');
+    other.classList.remove('sort_descending');
+
+    document.querySelector('.tree_container').remove();
+
+    if (this.classList.contains('header_name')) {
+        sortFolderName(root, ascending);
+    } else {
+        sortFolderSize(root, ascending);
+    }
+
+    var treeContainer = createTree();
+    fileList.append(treeContainer);
 }
 
 
 var fileList = document.querySelector('div[id^="files_"]');
 var fileListToggle = document.querySelector('a[onclick^="show_files"]');
 fileListToggle.text = '(Show file tree)';
+var root = {};
 fileListToggle.onclick = function toggleTree() {
     if (this.classList.contains('open_tree')) {
         this.text = '(Show file tree)';
@@ -192,13 +267,33 @@ treeStyle.innerHTML = `
     margin-left: 1.5em;
     border-left: dashed thin #8FC5E0;
 }
+.tree_header {
+    display: flex;
+    padding: 0.3em 2em 0.3em 2em;
+}
+.sort_ascending:after {
+    content: '🡩';
+    margin-left: 0.3em;
+    font-size: 10pt;
+}
+.sort_descending:after {
+    content: '🡫';
+    margin-left: 0.3em;
+    font-size: 10pt;
+}
+.header_name {
+    flex: 1;
+    cursor: pointer;
+}
+.header_size {
+    cursor: pointer;
+}
 .file_list {
     padding-left: 0.5em;
 }
 .folder li {
     list-style-type: none;
 }
-
 .file_item:nth-child(odd) {
     background-color: #EFF3F6;
 }
@@ -217,9 +312,11 @@ treeStyle.innerHTML = `
 }
 .folder_open:before {
     content: '📂';
+    font-size: 12pt;
 }
 .folder_closed:before {
     content: '📁';
+    font-size: 12pt;
 }
 .folder_details:before {
     margin-right: 0.3em;
