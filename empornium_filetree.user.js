@@ -4,6 +4,7 @@
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
 // @match        https://www.empornium.is/torrents.php?id=*
+// @match        https://www.empornium.me/torrents.php?id=*
 // @grant        none
 // ==/UserScript==
 
