@@ -259,6 +259,8 @@ fileListToggle.onclick = function toggleTree() {
     return false;
 };
 
+var oldListItemOdd = fileList.querySelector('.rowa');
+var oldStyleOdd = getComputedStyle(oldListItemOdd);
 var treeStyle = ce('style');
 document.head.append(treeStyle);
 document.head.append(treeStyle);
@@ -298,24 +300,22 @@ treeStyle.innerHTML = `
     list-style-type: none;
 }
 .file_item:nth-child(odd) {
-    background-color: #EFF3F6;
+    background-color: ${oldStyleOdd.backgroundColor};
+    color: ${oldStyleOdd.color};
 }
 .collapsed {
     display: none;
-}
-.tree_item:hover {
-    transform: scale(1.005);
-    box-shadow: 2px 2px 10px #0006;
 }
 .folder_details  {
     display: flex;
     flex-direction: row;
     align-items: center;
-    background-color: #FCFCFC;
-    color: #333333;
     padding: 2px 0 2px 5px;
     margin-left: 0.5em;
     cursor: pointer;
+}
+.folder_details:hover {
+transform:scale(1.1);
 }
 .folder_open:before {
     content: '📂';
@@ -329,7 +329,8 @@ treeStyle.innerHTML = `
     margin-right: 0.3em;
   }
 .folder_item:nth-child(odd) .folder_details {
-    background-color: #EFF3F6;
+    background-color: ${oldStyleOdd.backgroundColor};
+    color: ${oldStyleOdd.color};
 }
 .folder_name {
     flex: 1;
@@ -339,7 +340,6 @@ treeStyle.innerHTML = `
     font-size: 9pt;
 }
 .file_item {
-    background-color: #FCFCFC;
     display: flex;
     align-items: center;
     font-size: 8pt;
@@ -351,6 +351,10 @@ treeStyle.innerHTML = `
 }
 .file_size {
     padding-right: 1em;
+}
+.tree_item:hover {
+    transform: scale(1.005);
+    box-shadow: 2px 2px 10px #0006;;
 }
 .file_item .font_icon {
     font-size: 10pt;
