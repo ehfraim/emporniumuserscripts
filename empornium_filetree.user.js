@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         empornium better filelist
-// @version      1
+// @version      1.1
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
 // @namespace    empornium
@@ -302,6 +302,10 @@ treeStyle.innerHTML = `
 }
 .collapsed {
     display: none;
+}
+.tree_item:hover {
+    transform: scale(1.01);
+    box-shadow: 2px 2px 10px #0006;
 }
 .folder_details  {
     display: flex;
