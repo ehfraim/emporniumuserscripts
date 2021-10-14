@@ -7,12 +7,13 @@
 // @exclude        /https?://www\.empornium\.(is|me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(is|me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version        7.1
+// @version        7.2
+// @run-at         document-body
 // ==/UserScript==
 
 const variationRegexes = [
   // resolutions
-  /\d+ ?px|\d+p(?:\d+)?|sd(?!\w)|hd(?!\w)|4kuhd|uhd|fullhd|ultrahd|standard|\b[1-9]{1}k(?!\w)|\d+p?x\d+p?\s?(?:px)?|480lp|480|720|1080|(?:\d+ ?MP)/ig,
+  /\d+ ?px|\d+p(?:\d+)?|sd(?!\w)|hd(?!\w)|4kuhd| 4k|uhd|fullhd|ultrahd|standard|\b[1-9]{1}k(?!\w)|\d+p?x\d+p?\s?(?:px)?|480lp|480|360|720|1080|2160|(?:\d+ ?MP)/ig,
   // bitrate
   /(?:\d+(?:\.\d+)?\s?(?:k|m)?bps)|mobile-(?:high|medium|low)|mobile|(?:low|medium|high|higher) ?bitrate/ig,
   // extras
@@ -20,7 +21,7 @@ const variationRegexes = [
   // framerate
   /\d+(?:\.\d+)?\s?fps/ig,
   // encoding
-  /h\.?265|x\.?265|hevc|hvec|h\.?264|x\.?264|re-?encode|reencoded|rencoded|lower bitrate|lq|hq/ig,
+  /h\.?265|x\.?265|hevc|hvec|avc|h\.?264|x\.?264|re-?encode|reencoded|rencoded|lower bitrate|lq|hq/ig,
   // filetype
   /mpeg4|3gp|mp4|wmv|mkv/ig,
   // VR
@@ -30,18 +31,11 @@ const variationRegexes = [
 ];
 
 const soupCache = new Map();
-
-// console.time('Total time combining torrents');
-// console.time('Grouping torrents');
 const multipleTorrents = groupVariations();
-// console.timeEnd('Grouping torrents');
-// console.time('Combining torrents');
 const combinedTorrents = combineTorrents(multipleTorrents);
 combinedTorrents.forEach(combined => combined.old.parentElement.insertBefore(combined.tableRow, combined.old));
 multipleTorrents.forEach(t => t.tableRows.forEach(r => r.remove()));
 document.querySelectorAll('.torrent').forEach(everyOtherRowAB);
-// console.timeEnd('Combining torrents');
-// console.timeEnd('Total time combining torrents');
 
 function combineTorrents(multiTorrent) {
   const combinedTorrents = [];
@@ -231,11 +225,11 @@ function charSoup(_string) {
 
   let string = _string;
   const irrelevant = [
-    /{Se7enSeas}|{The Rat Bastards}/gi,  // group names
-    /( in )/gi,   // connecting words
-    /\.(com|org)/gi,    // TLDs
+    /{Se7enSeas}|{The Rat Bastards}/gi, // group names
+    /( in )/gi, // connecting words
+    /\.(com|org)/gi, // TLDs
     // /(\d+.\d+.\d+)/gi,    // dates
-    /[\s\W]/gi    // non word characters and whitespace
+    /[\s\W]/gi // non word characters and whitespace
   ];
   for (const ex of irrelevant) {
     string = string.replace(ex, '');
