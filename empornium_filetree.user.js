@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         empornium better filelist
-// @version      1.1
+// @version      1.14
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
 // @namespace    empornium
