@@ -110,7 +110,7 @@ function getFileType(fileName) {
 
 function makeFolderDom(folder) {
     var folderElement = ce('div', 'folder');
-    var folderDetails = ce('div', 'folder_details folder_closed');
+    var folderDetails = ce('div', 'folder_details folder_closed tree_item');
     folderDetails.innerHTML = `<span class="folder_name">${folder.name}</span><span class="folder_size">${formatBytes(folder.byteSize)}</span>`;
     folderElement.append(folderDetails);
     var container = ce('div', 'folder_container collapsable collapsed');
@@ -125,7 +125,7 @@ function makeFolderDom(folder) {
 
     var fileList = ce('ul', 'file_list');
     for (var file of folder.files) {
-        var filei = ce('li', 'file_item');
+        var filei = ce('li', 'file_item tree_item');
         filei.innerHTML = `<div class="icon_stack"><i class="font_icon file_icons ${getFileType(file.name)}"></i></div><span class="file_name">${file.name}</span><span class="file_size">${file.size}</span>`;
         fileList.append(filei);
     }
@@ -314,9 +314,6 @@ treeStyle.innerHTML = `
     margin-left: 0.5em;
     cursor: pointer;
 }
-.folder_details:hover {
-transform:scale(1.1);
-}
 .folder_open:before {
     content: '📂';
     font-size: 12pt;
@@ -344,6 +341,7 @@ transform:scale(1.1);
     align-items: center;
     font-size: 8pt;
     padding: 3px;
+    cursor: default;
 }
 .file_name {
     flex: 1;
