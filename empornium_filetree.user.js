@@ -304,7 +304,7 @@ treeStyle.innerHTML = `
     display: none;
 }
 .tree_item:hover {
-    transform: scale(1.01);
+    transform: scale(1.005);
     box-shadow: 2px 2px 10px #0006;
 }
 .folder_details  {
