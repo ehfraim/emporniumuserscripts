@@ -113,7 +113,7 @@ function makeFolderDom(folder) {
     var folderDetails = ce('div', 'folder_details folder_closed tree_item');
     folderDetails.innerHTML = `<span class="folder_name">${folder.name}</span><span class="folder_size">${formatBytes(folder.byteSize)}</span>`;
     folderElement.append(folderDetails);
-    var container = ce('div', 'folder_container collapsable collapsed');
+    var container = ce('div', 'folder_container');
     folderDetails.addEventListener('click', toggleCollapsed);
     var folderList = ce('ul', 'folder_list');
     for (var f of folder.folders) {
@@ -136,9 +136,8 @@ function makeFolderDom(folder) {
 
 
 function toggleCollapsed(e) {
-    e.currentTarget.nextElementSibling.classList.toggle('collapsed');
-    e.currentTarget.classList.toggle('folder_open');
-    e.currentTarget.classList.toggle('folder_closed');
+    this.classList.toggle('folder_open');
+    this.classList.toggle('folder_closed');
 }
 
 
@@ -148,7 +147,6 @@ function createTree() {
     var firstFolder = treeContainer.querySelector('.folder_closed');
     firstFolder.classList.remove('folder_closed');
     firstFolder.classList.add('folder_open');
-    treeContainer.querySelector('.collapsed').classList.toggle('collapsed');
 
     return treeContainer;
 }
@@ -303,9 +301,6 @@ treeStyle.innerHTML = `
     background-color: ${oldStyleOdd.backgroundColor};
     color: ${oldStyleOdd.color};
 }
-.collapsed {
-    display: none;
-}
 .folder_details  {
     display: flex;
     flex-direction: row;
@@ -321,6 +316,9 @@ treeStyle.innerHTML = `
 .folder_closed:before {
     content: '📁';
     font-size: 12pt;
+}
+.folder_closed + div {
+    display: none;
 }
 .folder_details:before {
     margin-right: 0.3em;
