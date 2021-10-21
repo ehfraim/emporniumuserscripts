@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         empornium better filelist
-// @version      1.14
+// @version      1.2
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
 // @namespace    empornium
@@ -115,21 +115,24 @@ function makeFolderDom(folder) {
     folderElement.append(folderDetails);
     var container = ce('div', 'folder_container');
     folderDetails.addEventListener('click', toggleCollapsed);
-    var folderList = ce('ul', 'folder_list');
-    for (var f of folder.folders) {
-        var foldi = ce('li', 'folder_item');
-        foldi.appendChild(makeFolderDom(f));
-        folderList.append(foldi);
+    if (folder.folders.length) {
+        var folderList = ce('ul', 'folder_list');
+        for (var f of folder.folders) {
+            var foldi = ce('li', 'folder_item');
+            foldi.appendChild(makeFolderDom(f));
+            folderList.append(foldi);
+        }
+        container.append(folderList);
     }
-    container.append(folderList);
-
-    var fileList = ce('ul', 'file_list');
-    for (var file of folder.files) {
-        var filei = ce('li', 'file_item tree_item');
-        filei.innerHTML = `<div class="icon_stack"><i class="font_icon file_icons ${getFileType(file.name)}"></i></div><span class="file_name">${file.name}</span><span class="file_size">${file.size}</span>`;
-        fileList.append(filei);
+    if (folder.files.length) {
+        var fileList = ce('ul', 'file_list');
+        for (var file of folder.files) {
+            var filei = ce('li', 'file_item tree_item');
+            filei.innerHTML = `<div class="icon_stack"><i class="font_icon file_icons ${getFileType(file.name)}"></i></div><span class="file_name">${file.name}</span><span class="file_size">${file.size}</span>`;
+            fileList.append(filei);
+        }
+        container.append(fileList);
     }
-    container.append(fileList);
     folderElement.append(container);
     return folderElement;
 }
@@ -153,11 +156,40 @@ function createTree() {
 
 
 function filterList(e) {
+    var container = document.querySelector('.tree_container');
+    container.classList.add('hidden'); // temporary hide  when hiding children
+    if ((e.key === "Backspace" || e.key === "Delete") && this.value.length < 1) {
 
+        container.querySelectorAll('.hidden, .folder_force_open, .file_found').forEach(f => {
+            f.classList.remove('hidden', 'folder_force_open', 'file_found');
+        });
+        container.classList.remove('hidden');
+        return false;
+    }
+
+    var needle = new RegExp(this.value, 'i');
+    container.querySelectorAll('.file_name').forEach(f => {
+        var hit = f.innerText.match(needle);
+        var fileItem = f.parentElement;
+        if (hit) {
+            fileItem.classList.remove('hidden');
+            fileItem.classList.add('file_found');
+        } else {
+            fileItem.classList.add('hidden');
+            fileItem.classList.remove('file_found');
+        }
+    });
+    container.querySelectorAll('.folder').forEach(f => {
+        if (f.querySelector('.file_found')) {
+            f.querySelector('.folder_details').classList.add('folder_force_open');
+        } else {
+            f.querySelector('.folder_details').classList.remove('folder_force_open');
+        }
+    });
+    container.classList.remove('hidden');
 }
 
 function expandAllFolders(e) {
-    console.log('expand');
     e.preventDefault();
     var closedFolders = document.querySelectorAll('.folder_closed');
     var openFolders = [...document.querySelectorAll('.folder_open')].slice(1);
@@ -211,7 +243,7 @@ function list2Tree() {
     expand.title = 'Expand all folders';
     expand.dataset.collapsed = 'collapsed';
     filterInput.placeholder = '🔍Filter list';
-    filterInput.addEventListener('keydown', filterList);
+    filterInput.addEventListener('keyup', filterList);
     expand.addEventListener('click', expandAllFolders);
     tools.append(expand, filterInput);
     header.append(headerName, tools, headerSize);
@@ -351,6 +383,9 @@ treeStyle.innerHTML = `
 .file_list {
     padding-left: 0.5em;
 }
+.folder_list {
+    margin-bottom: 10px;
+}
 .folder li {
     list-style-type: none;
 }
@@ -375,6 +410,9 @@ treeStyle.innerHTML = `
 }
 .folder_closed + div {
     display: none;
+}
+.folder_force_open + div {
+    display:block;
 }
 .folder_details:before {
     margin-right: 0.3em;
