@@ -152,6 +152,32 @@ function createTree() {
 }
 
 
+function filterList(e) {
+
+}
+
+function expandAllFolders(e) {
+    console.log('expand');
+    e.preventDefault();
+    var closedFolders = document.querySelectorAll('.folder_closed');
+    var openFolders = [...document.querySelectorAll('.folder_open')].slice(1);
+    if (this.dataset.collapsed == 'collapsed') {
+        closedFolders.forEach(f => {
+            f.classList.add('folder_open');
+            f.classList.remove('folder_closed');
+        });
+        this.dataset.collapsed = 'expanded';
+        this.innerText = this.innerText.replace('📁Expand', '📂Collapse');
+    } else if (this.dataset.collapsed == 'expanded') {
+        openFolders.forEach(f => {
+            f.classList.add('folder_closed');
+            f.classList.remove('folder_open');
+        });
+        this.dataset.collapsed = 'collapsed';
+        this.innerText = this.innerText.replace('📂Collapse', '📁Expand');
+    }
+}
+
 function list2Tree() {
     var tabl = fileList.querySelector('table');
     var rows = [...tabl.rows];
@@ -177,7 +203,18 @@ function list2Tree() {
     headerSize.addEventListener('click', sortTree);
     headerName.dataset.other = 'header_size';
     headerSize.dataset.other = 'header_name';
-    header.append(headerName, headerSize);
+    var tools = ce('span', 'header_tools');
+    var expand = ce('a', 'header_expand');
+    var filterInput = ce('input', 'header_filter');
+    expand.text = '(📁Expand all)';
+    expand.href = '#';
+    expand.title = 'Expand all folders';
+    expand.dataset.collapsed = 'collapsed';
+    filterInput.placeholder = '🔍Filter list';
+    filterInput.addEventListener('keydown', filterList);
+    expand.addEventListener('click', expandAllFolders);
+    tools.append(expand, filterInput);
+    header.append(headerName, tools, headerSize);
     fileList.append(header);
 
     var treeContainer = createTree();
@@ -272,7 +309,9 @@ treeStyle.innerHTML = `
 }
 .tree_header {
     display: flex;
-    padding: 0.3em 2em 0.3em 2em;
+    padding: 0.5em 2em 0.3em 2em;
+    justify-content: space-between;
+    align-items: baseline;
 }
 .sort_ascending:after {
     content: '🡩';
@@ -285,11 +324,29 @@ treeStyle.innerHTML = `
     font-size: 10pt;
 }
 .header_name {
-    flex: 1;
     cursor: pointer;
 }
 .header_size {
     cursor: pointer;
+}
+.header_tools {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    width: 400px;
+}
+.header_expand {
+    margin-right: 1em;
+    font-weight: normal;
+    font-size: 10pt;
+}
+.header_filter {
+    border: none;
+    border-radius: 5px;
+    background: #29374F;
+    color: #bcd;
+    width: 20em;
+    padding: 4px;
 }
 .file_list {
     padding-left: 0.5em;
@@ -299,7 +356,6 @@ treeStyle.innerHTML = `
 }
 .file_item:nth-child(odd) {
     background-color: ${oldStyleOdd.backgroundColor};
-    /*color: ${oldStyleOdd.color};*/
 }
 .folder_details  {
     display: flex;
@@ -325,7 +381,6 @@ treeStyle.innerHTML = `
   }
 .folder_item:nth-child(odd) .folder_details {
     background-color: ${oldStyleOdd.backgroundColor};
-    /*color: ${oldStyleOdd.color};*/
 }
 .folder_name {
     flex: 1;
