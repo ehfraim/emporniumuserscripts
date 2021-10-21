@@ -299,7 +299,7 @@ treeStyle.innerHTML = `
 }
 .file_item:nth-child(odd) {
     background-color: ${oldStyleOdd.backgroundColor};
-    color: ${oldStyleOdd.color};
+    /*color: ${oldStyleOdd.color};*/
 }
 .folder_details  {
     display: flex;
@@ -325,7 +325,7 @@ treeStyle.innerHTML = `
   }
 .folder_item:nth-child(odd) .folder_details {
     background-color: ${oldStyleOdd.backgroundColor};
-    color: ${oldStyleOdd.color};
+    /*color: ${oldStyleOdd.color};*/
 }
 .folder_name {
     flex: 1;
@@ -349,8 +349,8 @@ treeStyle.innerHTML = `
     padding-right: 1em;
 }
 .tree_item:hover {
-    transform: scale(1.005);
-    box-shadow: 2px 2px 10px #0006;;
+    transform: scale(1.002);
+    box-shadow: 2px 1px 8px #0006;
 }
 .file_item .font_icon {
     font-size: 10pt;
