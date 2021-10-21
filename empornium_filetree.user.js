@@ -310,11 +310,11 @@ treeStyle.innerHTML = `
     cursor: pointer;
 }
 .folder_open:before {
-    content: '📂';
+    content: '◢​📂';
     font-size: 12pt;
 }
 .folder_closed:before {
-    content: '📁';
+    content: '▷​📁';
     font-size: 12pt;
 }
 .folder_closed + div {
