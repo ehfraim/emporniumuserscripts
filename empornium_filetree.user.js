@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         empornium better filelist
-// @version      2
+// @version      2.1
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
 // @namespace    empornium
@@ -158,8 +158,8 @@ function createTree() {
 function filterList(e) {
     var container = document.querySelector('.tree_container');
     container.classList.add('hidden'); // temporary hide  when hiding children
-    if ((e.key === "Backspace" || e.key === "Delete") && this.value.length < 1) {
-
+    if ((e.key === "Escape")||((e.key === "Backspace" || e.key === "Delete") && this.value.length < 1)) {
+        this.value = '';
         container.querySelectorAll('.hidden, .folder_force_open, .file_found').forEach(f => {
             f.classList.remove('hidden', 'folder_force_open', 'file_found');
         });
@@ -243,7 +243,8 @@ function list2Tree() {
     expand.title = 'Expand all folders';
     expand.dataset.collapsed = 'collapsed';
     filterInput.placeholder = '🔍Filter list';
-    filterInput.addEventListener('keyup', filterList);
+    filterInput.type = 'search';
+    filterInput.addEventListener('input', filterList);
     expand.addEventListener('click', expandAllFolders);
     tools.append(expand, filterInput);
     header.append(headerName, tools, headerSize);
