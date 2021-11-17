@@ -336,6 +336,12 @@ treeStyle.innerHTML = `
 .tree_container * {
     margin: 0;
 }
+.tree_container {
+    max-height: 600px;
+    overflow-y: scroll;
+    resize: vertical;
+    contain: content;
+}
 .folder_container {
     margin-left: 1.5em;
     border-left: dashed thin #8FC5E0;
