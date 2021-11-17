@@ -154,12 +154,16 @@ function createTree() {
     return treeContainer;
 }
 
+function clearFilter(e) {
+    if (e.key != "Escape") return;
+    this.value = '';
+    filterList(e);
+}
 
 function filterList(e) {
     var container = document.querySelector('.tree_container');
     container.classList.add('hidden'); // temporary hide  when hiding children
-    if ((e.key === "Escape")||((e.key === "Backspace" || e.key === "Delete") && this.value.length < 1)) {
-        this.value = '';
+    if (e.target.value.length < 1) {
         container.querySelectorAll('.hidden, .folder_force_open, .file_found').forEach(f => {
             f.classList.remove('hidden', 'folder_force_open', 'file_found');
         });
@@ -245,6 +249,7 @@ function list2Tree() {
     filterInput.placeholder = '🔍Filter list';
     filterInput.type = 'search';
     filterInput.addEventListener('input', filterList);
+    filterInput.addEventListener('keyup', clearFilter);
     expand.addEventListener('click', expandAllFolders);
     tools.append(expand, filterInput);
     header.append(headerName, tools, headerSize);
