@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         empornium better filelist
-// @version      2.1
+// @version      2.2
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
 // @namespace    empornium
@@ -167,15 +167,19 @@ function filterList(e) {
         container.querySelectorAll('.hidden, .folder_force_open, .file_found').forEach(f => {
             f.classList.remove('hidden', 'folder_force_open', 'file_found');
         });
+        container.querySelectorAll('.filter_match').forEach(m => {
+          m.outerHTML = m.textContent;
+        });
         container.classList.remove('hidden');
         return false;
     }
 
     var needle = new RegExp(this.value, 'i');
     container.querySelectorAll('.file_name').forEach(f => {
-        var hit = f.innerText.match(needle);
+        var hit = f.textContent.match(needle);
         var fileItem = f.parentElement;
         if (hit) {
+            f.innerHTML = wrapMatch(f.textContent, hit);
             fileItem.classList.remove('hidden');
             fileItem.classList.add('file_found');
         } else {
@@ -183,13 +187,29 @@ function filterList(e) {
             fileItem.classList.remove('file_found');
         }
     });
-    container.querySelectorAll('.folder').forEach(f => {
-        if (f.querySelector('.file_found')) {
-            f.querySelector('.folder_details').classList.add('folder_force_open');
+
+    container.querySelectorAll('.folder').forEach(folder => {
+      var hit = folder.textContent.match(needle);
+      var found = folder.querySelector('.file_found');
+      if (hit || found) {
+            folder.classList.remove('hidden');
+            folder.classList.add('file_found');
+            if (found) {
+              folder.querySelector('.folder_details').classList.add('folder_force_open');
+            } else {
+              folder.querySelector('.folder_details').classList.remove('folder_force_open');
+            }
+            if (hit) {
+              var folderName = folder.querySelector('.folder_name');
+              folderName.innerHTML = wrapMatch(folderName.textContent, hit);
+            }
         } else {
-            f.querySelector('.folder_details').classList.remove('folder_force_open');
+            folder.classList.remove('file_found');
+            folder.classList.add('hidden');
         }
     });
+
+    container.querySelector('.folder').classList.remove('hidden');
     container.classList.remove('hidden');
 }
 
@@ -311,6 +331,12 @@ function sortTree() {
 
     var treeContainer = createTree();
     fileList.append(treeContainer);
+}
+
+function wrapMatch(text, match) {
+  var matchElement = ce('span', 'filter_match');
+  matchElement.textContent = match[0];
+  return text.replaceAll(match, matchElement.outerHTML);
 }
 
 
@@ -452,6 +478,10 @@ treeStyle.innerHTML = `
 }
 .file_size {
     padding-right: 1em;
+}
+.filter_match {
+    font-weight: bold;
+    background-color: yellow;
 }
 .tree_item:hover {
     transform: scale(1.002);
