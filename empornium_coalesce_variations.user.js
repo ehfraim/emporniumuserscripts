@@ -268,7 +268,6 @@ function everyOtherRowAB(row) {
 }
 
 var empStyle = document.createElement('style');
-empStyle.type = 'text/css';
 empStyle.innerHTML = `
   .variationLink {
     margin-right: 4px;
