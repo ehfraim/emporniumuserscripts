@@ -108,7 +108,7 @@ function combineTorrents(multiTorrent) {
 }
 
 function heading(t) {
-  return t.querySelector('a[href*="torrents.php?id="]').textContent;
+  return t.querySelector('td:nth-child(2) a[href*="torrents.php?id="]').textContent;
 }
 
 function extractVariation(title) {
