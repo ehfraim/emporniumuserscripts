@@ -123,8 +123,16 @@ function extractVariation(title) {
       cleanTitle = cleanTitle.replace(match, '');
     }
   }
-  cleanTitle = cleanTitle.replace(/\!+|\/$|\[[\s\W]*\]|\(\s?\)/g, '').replace(/\[.?\]|\(.?\)/g, '').replace(/[\(\{\[]+\s*[\)\]\}]+/, '');;
-  cleanTitle = cleanTitle.replace(/\s+/g, ' ').trim().replace(/ \.|( \-|in|freeleech|\[req\])$/i, '').trim();
+
+  const replacementRegs = [
+    /\!+|\/$|\[[\s\W]*\]|\(\s?\)/g, // extra !, /, whitespace and non-word characters in [], empty ()
+    /[\(\{\[]+(?:\s*|.)[\)\]\}]+/g, // brackets with one character or only whitespace, can be nested [[]]
+    /\s(?=\s)/g, // more than one whitespace in a row
+    / \.|( \-|in|freeleech|\[req\])$/i // trailing dot and dash and some words
+  ]
+  replacementRegs.forEach(re => {
+    cleanTitle = cleanTitle.replace(re, '').trim();
+  })
   if (variations.length < 1) variations.push('other');
   return { variation: '[' + variations.join(', ') + ']', cleanTitle: cleanTitle };
 }
