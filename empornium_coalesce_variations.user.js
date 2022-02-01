@@ -7,8 +7,7 @@
 // @exclude        /https?://www\.empornium\.(is|me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(is|me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version        7.2
-// @run-at         document-body
+// @version        7.3
 // ==/UserScript==
 
 const variationRegexes = [
@@ -146,6 +145,10 @@ function groupVariations() {
     const variation = extractVariation(heading(torrent));
     const cleanHeading = variation.cleanTitle;
     let found = false;
+    if (cleanHeading.length < 1) {
+      console.error('Heading is empty', torrent);
+      continue;
+    }
     for (const t of torrentTable) {
       if (charSoup(t.cleanHeading) === charSoup(cleanHeading)) {
         found = true;
