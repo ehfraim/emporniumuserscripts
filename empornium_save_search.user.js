@@ -5,7 +5,8 @@
 // @author       ephraim
 // @include      https://www.empornium.me/torrents.php*
 // @include      https://www.empornium.sx/torrents.php*
-// @version      4
+// @include      https://www.empornium.is/torrents.php*
+// @version      4.1
 // @grant        GM_setValue
 // @grant        GM_getValue
 // ==/UserScript==
@@ -26,7 +27,7 @@ saveCheckbox.checked = GM_getValue(KEEP_OPEN_CHECKBOX_NAME, false);
 saveCheckbox.addEventListener('click', checkboxListener);
 var saveCheckboxLabel = document.createElement('label');
 saveCheckboxLabel.id = 'searchSaveCheckboxLabel';
-saveCheckboxLabel.innerText = 'Keep saved searches visable';
+saveCheckboxLabel.innerText = 'Keep saved searches visible';
 saveCheckboxLabel.appendChild(saveCheckbox);
 
 var viewSearchesButton = document.createElement('a');
@@ -139,7 +140,7 @@ function saveButtonListener(e) {
 
 
 function restoreSearch(searchElement) {
-    var savedSearch = searchDB[parseInt(searchElement.parentElement.dataset.index)];
+    var savedSearch = searchDB[parseInt(searchElement.closest('.searchItem').dataset.index)];
     savedSearch.textInputs.forEach(input => {
         var field = searchBox.querySelector(`[name=${input.name}`);
         field.value = input.value;
@@ -158,10 +159,11 @@ function restoreListener(e) {
 }
 
 function appendSearch(searchElement) {
-    var savedSearch = searchDB[parseInt(searchElement.parentElement.dataset.index)];
+    var savedSearch = searchDB[parseInt(searchElement.closest('.searchItem').dataset.index)];
     savedSearch.textInputs.forEach(input => {
         var field = searchBox.querySelector(`[name=${input.name}`);
         if (field.name === 'sizerange') return;
+        if (!input.value.length) return
         field.value = field.value + ' ' + input.value;
     });
     savedSearch.checkBoxes.forEach(box => {
@@ -177,7 +179,7 @@ function appendListener(e) {
 
 
 function deleteSearch(searchElement) {
-    var index = parseInt(searchElement.parentElement.dataset.index);
+    var index = parseInt(searchElement.closest('.searchItem').dataset.index);
     searchDB.splice(index, 1);
     GM_setValue(DB_NAME, JSON.stringify(searchDB));
     rebuildSearchList();
@@ -216,12 +218,16 @@ function createSearchList() {
         deleteButton.title = 'Delete this search';
         deleteButton.addEventListener('click', deleteListener);
 
+        var buttons = document.createElement('span');
+        buttons.className = 'searchButtons';
+        buttons.appendChild(appendButton);
+        buttons.appendChild(deleteButton);
+
         var item = document.createElement('li');
         item.className = 'searchItem';
         item.dataset.index = index;
         item.appendChild(searchName);
-        item.appendChild(appendButton);
-        item.appendChild(deleteButton);
+        item.appendChild(buttons);
         searchList.appendChild(item);
         index++;
     }
@@ -257,17 +263,19 @@ style.innerHTML = `
 .searchName {
     overflow: hidden;
     text-overflow: ellipsis;
-    display: inline-block;
     white-space: nowrap;
-    max-width: calc(100% - 40px);
-    width: 100%;
-    vertical-align: middle;
+    flex-grow: 2;
+    padding: 1px;
 }
 
 .saveButton {
     opacity: 0;
     vertical-align: middle;
     filter: drop-shadow(1px 2px 1px #6f6a6a);
+    border-color: #0000;
+    border-width: 1px;
+    border-style: inset;
+    border-radius: 3px;
 }
 
 .saveButton:hover {
@@ -276,31 +284,34 @@ style.innerHTML = `
 }
 
 .saveButton:active {
-    border-width: 1px;
-    border-style: inset;
     border-color: #929292;
-    border-radius: 3px;
 }
 
 .searchItem:hover .saveButton {
     opacity: 1;
 }
 
+.searchButtons {
+  display: flex;
+  gap: 3px;
+}
+
 .deleteButton {
-    color: #e40303;
+    color: #000000ab;
+    text-shadow: 0 0 0 #d91f1f;
 }
 
 .appendButton {
-    color: #38cb38;
-    margin-right: 8px;
+    color: #0006;
+    text-shadow: 0 0 0 #2e9d06;
 }
 
 .searchItem {
     margin: 3px 0 3px 0;
     background-image: linear-gradient(to bottom right, #eff3f6, #d4dfea);
     border-radius: 6px;
-    padding: 3px;
-    display: block;
+    padding: 2px 3px;
+    display: flex;
 }
 
 #searchSaveCheckboxLabel {
