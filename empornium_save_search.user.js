@@ -6,7 +6,7 @@
 // @include      https://www.empornium.me/torrents.php*
 // @include      https://www.empornium.sx/torrents.php*
 // @include      https://www.empornium.is/torrents.php*
-// @version      4.1
+// @version      4.2
 // @grant        GM_setValue
 // @grant        GM_getValue
 // ==/UserScript==
@@ -129,6 +129,7 @@ function saveSearch() {
     });
     search.title = searchBox.querySelector(`#searchSaveName`).value || search.textInputs[0].value || search.textInputs[1].value || search.textInputs[5].value || 'Unknown search';
     searchDB.push(search);
+    searchDB.sort((a,b) => a.title.localeCompare(b.title)); // sort by name
     GM_setValue(DB_NAME, JSON.stringify(searchDB));
     rebuildSearchList();
 }
@@ -179,10 +180,13 @@ function appendListener(e) {
 
 
 function deleteSearch(searchElement) {
-    var index = parseInt(searchElement.closest('.searchItem').dataset.index);
+    var searchItem = searchElement.closest('.searchItem');
+    var index = parseInt(searchItem.dataset.index);
     searchDB.splice(index, 1);
     GM_setValue(DB_NAME, JSON.stringify(searchDB));
-    rebuildSearchList();
+    searchItem.classList.add('searchDeleted')
+    setTimeout(rebuildSearchList, 500)
+    //rebuildSearchList();
 }
 
 
@@ -320,6 +324,24 @@ style.innerHTML = `
 
 #searchSaveCheckbox {
     margin-left: 5px;
+}
+
+.searchDeleted {
+    animation: delete-animation 0.5s cubic-bezier(0.55, -0.04, 0.91, 0.94) forwards;
+    /*transform origin is moved to the bottom left corner*/
+    transform-origin: 0% 100%;
+}
+
+@keyframes delete-animation {
+    0% {
+        opacity: 1;
+        transform: rotateZ(0);
+}
+
+    100% {
+        opacity: 0;
+        transform: translateY(60px) rotateZ(20deg);
+    }
 }
 `;
 document.head.appendChild(style);
