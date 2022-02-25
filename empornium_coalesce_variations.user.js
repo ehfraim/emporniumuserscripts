@@ -7,7 +7,7 @@
 // @exclude        /https?://www\.empornium\.(is|me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(is|me|sx)/torrents\.php\?action=notify/
 // @grant          none
-// @version        7.3
+// @version        7.3.1
 // ==/UserScript==
 
 const variationRegexes = [
@@ -66,6 +66,9 @@ function combineTorrents(multiTorrent) {
       variationName.href = mt.hrefs[i];
       variationName.title = mt.headings[i];
       variationName.className = 'variationLink';
+      let torrentId = new URL(mt.hrefs[i]).searchParams.get('id');
+      variationName.setAttribute('onmouseover', `return overlib(overlay${torrentId}, FULLHTML);`);
+      variationName.setAttribute('onmouseout', 'return nd();');
       li.appendChild(variationName);
       li.appendChild(mt.info[i]);
       li.className = 'torrent_variations';
