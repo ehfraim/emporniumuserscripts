@@ -22,7 +22,7 @@ const variationRegexes = [
   // encoding
   /h\.?265|x\.?265|hevc|hvec|avc|h\.?264|x\.?264|re-?encode|reencoded|rencoded|lower bitrate|lq|hq/ig,
   // filetype
-  /mpeg4|3gp|mp4|wmv|mkv/ig,
+  /mpeg4|3gp|mp4|wmv|mkv|blu-ray/ig,
   // VR
   /(?:desktop|gearvr\/?daydream|gear|daydream(?: view)|smartphone|mobile|oculus\/?(?:vive)(?: rift)?|oculus\/?(?: ?go)?|go \dk|vive|PlayStationVR PS4|playstation|Google Cardboard|windows mixed reality)(?: ?vr)?/ig,
   // reported torrents
@@ -239,7 +239,8 @@ function charSoup(_string) {
     /{Se7enSeas}|{The Rat Bastards}/gi, // group names
     /( in )/gi, // connecting words
     /\.(com|org)/gi, // TLDs
-    // /(\d+.\d+.\d+)/gi,    // dates
+    /\d{2,4}[-\.]\d+[-\.]\d{2,4}/gi, // dates
+    /\[[\w\s/-]+\]/, // anything in brackets, like different websites
     /[\s\W]/gi // non word characters and whitespace
   ];
   for (const ex of irrelevant) {
