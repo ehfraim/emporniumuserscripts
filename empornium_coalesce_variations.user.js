@@ -46,12 +46,12 @@ function combineTorrents(multiTorrent) {
       tcells.push(td);
     }
     const mt = extractData(torrent);
-    const nameDiv = document.createElement('div');
+    const nameDataCell = tcells[1];
     if (mt.script)
-      nameDiv.appendChild(mt.script);
+      nameDataCell.appendChild(mt.script);
     const title = mt.title;
     title.textContent = mt.cleanHeading;
-    nameDiv.appendChild(title);
+    nameDataCell.appendChild(title);
 
     const infoUl = document.createElement('ul');
     infoUl.className = 'infoList';
@@ -74,17 +74,16 @@ function combineTorrents(multiTorrent) {
       li.className = 'torrent_variations';
       infoUl.appendChild(li);
     }
-    nameDiv.appendChild(infoUl);
+    nameDataCell.appendChild(infoUl);
     const tagsDiv = document.createElement('div');
     tagsDiv.className = 'tags';
     for (const t of mt.tags) {
       tagsDiv.appendChild(t);
       tagsDiv.appendChild(document.createTextNode(' '));
     }
-    nameDiv.appendChild(tagsDiv);
+    nameDataCell.appendChild(tagsDiv);
 
     tcells[0] = mt.category;
-    tcells[1].appendChild(nameDiv);
     tcells[2].appendChild(makeList(mt.files));
     tcells[3].appendChild(makeList(mt.comments));
     tcells[4].appendChild(makeList(mt.times));
