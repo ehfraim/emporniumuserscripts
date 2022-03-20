@@ -6,8 +6,9 @@
 // @include        /https?://www\.empornium\.(is|me|sx)/(torrents|user)\.php/
 // @exclude        /https?://www\.empornium\.(is|me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(is|me|sx)/torrents\.php\?action=notify/
+// @downloadURL    https://greasyfork.org/scripts/441810-empornium-coalesce-variations/code/Empornium%20coalesce%20variations.user.js
 // @grant          none
-// @version        7.3.1
+// @version        7.3.2
 // ==/UserScript==
 
 const variationRegexes = [
