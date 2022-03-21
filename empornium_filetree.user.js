@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         empornium better filelist
-// @version      2.2
+// @version      2.2.1
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
 // @namespace    empornium
@@ -168,7 +168,7 @@ function filterList(e) {
             f.classList.remove('hidden', 'folder_force_open', 'file_found');
         });
         container.querySelectorAll('.filter_match').forEach(m => {
-          m.outerHTML = m.textContent;
+            m.outerHTML = m.textContent;
         });
         container.classList.remove('hidden');
         return false;
@@ -189,19 +189,19 @@ function filterList(e) {
     });
 
     container.querySelectorAll('.folder').forEach(folder => {
-      var hit = folder.textContent.match(needle);
-      var found = folder.querySelector('.file_found');
-      if (hit || found) {
+        var hit = folder.textContent.match(needle);
+        var found = folder.querySelector('.file_found');
+        if (hit || found) {
             folder.classList.remove('hidden');
             folder.classList.add('file_found');
             if (found) {
-              folder.querySelector('.folder_details').classList.add('folder_force_open');
+                folder.querySelector('.folder_details').classList.add('folder_force_open');
             } else {
-              folder.querySelector('.folder_details').classList.remove('folder_force_open');
+                folder.querySelector('.folder_details').classList.remove('folder_force_open');
             }
             if (hit) {
-              var folderName = folder.querySelector('.folder_name');
-              folderName.innerHTML = wrapMatch(folderName.textContent, hit);
+                var folderName = folder.querySelector('.folder_name');
+                folderName.innerHTML = wrapMatch(folderName.textContent, hit);
             }
         } else {
             folder.classList.remove('file_found');
@@ -334,9 +334,9 @@ function sortTree() {
 }
 
 function wrapMatch(text, match) {
-  var matchElement = ce('span', 'filter_match');
-  matchElement.textContent = match[0];
-  return text.replaceAll(match, matchElement.outerHTML);
+    var matchElement = ce('span', 'filter_match');
+    matchElement.textContent = match[0];
+    return text.replaceAll(match, matchElement.outerHTML);
 }
 
 
