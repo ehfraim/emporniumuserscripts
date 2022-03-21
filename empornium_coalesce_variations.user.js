@@ -8,24 +8,24 @@
 // @exclude        /https?://www\.empornium\.(is|me|sx)/torrents\.php\?action=notify/
 // @downloadURL    https://greasyfork.org/scripts/441810-empornium-coalesce-variations/code/Empornium%20coalesce%20variations.user.js
 // @grant          none
-// @version        7.3.2
+// @version        7.3.3
 // ==/UserScript==
 
 const variationRegexes = [
+  // VR
+  /(?:desktop|gearvr\/?daydream|gear|daydream(?: view)|smartphone|mobile|oculus\/?(?:vive)(?: rift)?|oculus\/?(?: ?go)?|go \dk|vive|PlayStationVR PS4|playstation|psvr)(?: ?vr)?/ig,
   // resolutions
   /\d+ ?px|\d+p(?:\d+)?|sd(?!\w)|hd(?!\w)|4kuhd| 4k|uhd|fullhd|ultrahd|standard|\b[1-9]{1}k(?!\w)|\d+p?x\d+p?\s?(?:px)?|480lp|480|360|720|1080|2160|(?:\d+ ?MP)/ig,
   // bitrate
   /(?:\d+(?:\.\d+)?\s?(?:k|m)?bps)|mobile-(?:high|medium|low)|mobile|(?:low|medium|high|higher) ?bitrate/ig,
   // extras
-  /bts|(hq )*image *set|images|(?:with )?picset|\+?pictures|\+?photoset|pics|pic set|x\d+|uhq|\d+\s?pics|requested|request|req|(first|second) (camera|cam)|best cut/ig,
+  /bts|(hq )*image *set|images|(?:with )?picset|\+?pictures|\+?photoset|pics|pic set|x\d+|uhq|\d+\s?pics|requested|request|req|(first|second) (camera|cam)|best cut|split scenes/ig,
   // framerate
   /\d+(?:\.\d+)?\s?fps/ig,
   // encoding
-  /h\.?265|x\.?265|hevc|hvec|avc|h\.?264|x\.?264|re-?encode|reencoded|rencoded|lower bitrate|lq|hq/ig,
+  /h\.?265|x\.?265|hevc|hvec|avc|h\.?264|x\.?264|re-?encode|reencoded|rencoded|lower bitrate|lq|hq|original/ig,
   // filetype
   /mpeg4|3gp|mp4|wmv|mkv|blu-ray/ig,
-  // VR
-  /(?:desktop|gearvr\/?daydream|gear|daydream(?: view)|smartphone|mobile|oculus\/?(?:vive)(?: rift)?|oculus\/?(?: ?go)?|go \dk|vive|PlayStationVR PS4|playstation|Google Cardboard|windows mixed reality)(?: ?vr)?/ig,
   // reported torrents
   / \/ Reported/i
 ];
@@ -127,7 +127,7 @@ function extractVariation(title) {
   }
 
   const replacementRegs = [
-    /\!+|\/$|\[[\s\W]*\]|\(\s?\)/g, // extra !, /, whitespace and non-word characters in [], empty ()
+    /\!+|\/$|\[[\s\W]*\]|\([\s\W]*\)/g, // extra !, /, whitespace and non-word characters in [], empty ()
     /[\(\{\[]+(?:\s*|.)[\)\]\}]+/g, // brackets with one character or only whitespace, can be nested [[]]
     /\s(?=\s)/g, // more than one whitespace in a row
     / \.|( \-|in|freeleech|\[req\])$/i // trailing dot and dash and some words
