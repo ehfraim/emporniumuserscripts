@@ -8,7 +8,7 @@
 // @exclude        /https?://www\.empornium\.(is|me|sx)/torrents\.php\?action=notify/
 // @downloadURL    https://greasyfork.org/scripts/441810-empornium-coalesce-variations/code/Empornium%20coalesce%20variations.user.js
 // @grant          none
-// @version        7.3.3
+// @version        7.3.4
 // ==/UserScript==
 
 const variationRegexes = [
@@ -242,12 +242,15 @@ function charSoup(_string) {
     /{Se7enSeas}|{The Rat Bastards}/gi, // group names
     /( in )/gi, // connecting words
     /\.(com|org)/gi, // TLDs
-    /\d{2,4}[-\.]\d+[-\.]\d{2,4}/gi, // dates
     /\[[\w\s/-]+\]/, // anything in brackets, like different websites
-    /[\s\W]/gi // non word characters and whitespace
+    /[\s\W]/gi, // non word characters and whitespace
+    /\d{2,4}[-\.]\d+[-\.]\d{2,4}/gi // dates
   ];
   for (const ex of irrelevant) {
-    string = string.replace(ex, '');
+    var shorterString = string.replace(ex, '');
+    if (shorterString.length > 30) {
+      string = shorterString;
+    }
   }
   string = string.toLowerCase();
   soupCache.set(_string, string);
