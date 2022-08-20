@@ -256,14 +256,18 @@ function list2Tree() {
     root = tree(root);
     tabl.style.display = 'none';
     var header = ce('div', 'tree_header colhead');
-    var headerName = ce('span', 'header_name sort_ascending');
+    var headerName = ce('span', 'header_name sort_ascending header_item');
     headerName.innerText = 'Name';
     headerName.addEventListener('click', sortTree);
-    var headerSize = ce('span', 'header_size');
+    var headerFiles = ce('span', 'header_files header_item');
+    headerFiles.innerText = 'Files';
+    headerFiles.addEventListener('click', sortTree);
+    var headerSize = ce('span', 'header_size header_item');
     headerSize.innerText = 'Size';
     headerSize.addEventListener('click', sortTree);
-    headerName.dataset.other = 'header_size';
-    headerSize.dataset.other = 'header_name';
+    headerName.dataset.type = 'header_name';
+    headerFiles.dataset.type = 'header_files';
+    headerSize.dataset.type = 'header_size';
     var tools = ce('span', 'header_tools');
     var expand = ce('a', 'header_expand');
     var filterInput = ce('input', 'header_filter');
@@ -277,7 +281,11 @@ function list2Tree() {
     filterInput.addEventListener('keyup', clearFilter);
     expand.addEventListener('click', expandAllFolders);
     tools.append(expand, filterInput);
-    header.append(headerName, tools, headerSize);
+    var headerLeft = ce('span', 'header_left')
+    var headerRight = ce('span', 'header_right')
+    headerLeft.append(headerName, tools)
+    headerRight.append(headerFiles, headerSize)
+    header.append(headerLeft, headerRight);
     fileList.append(header);
 
     var treeContainer = createTree();
@@ -298,6 +306,15 @@ function sortFolderSize(folder, ascending) {
     });
 }
 
+function sortFolderFiles(folder, ascending) {
+    var direction = ascending ? 1 : -1;
+    folder.folders.sort((a, b) => {
+        return direction * (b.files.length - a.files.length);
+    });
+    folder.folders.forEach(f => {
+        sortFolderFiles(f, ascending);
+    });
+}
 
 function sortFolderName(folder, ascending) {
     var direction = ascending ? -1 : 1;
@@ -314,25 +331,31 @@ function sortFolderName(folder, ascending) {
 
 
 function sortTree() {
-    var ascending = this.classList.contains('sort_ascending');
-    if (ascending) {
+    var isAscending = this.classList.contains('sort_ascending');
+    if (isAscending) {
         this.classList.add('sort_descending');
         this.classList.remove('sort_ascending');
     } else {
         this.classList.add('sort_ascending');
         this.classList.remove('sort_descending');
+    }    
+
+    var others = this.parentElement.querySelectorAll(`.header_item:not(.${this.dataset.type})`)
+    for (var other of others) {
+        other.classList.remove('sort_ascending');
+        other.classList.remove('sort_descending');
     }
-    var other = this.parentElement.querySelector(`.${this.dataset.other}`);
-    other.classList.remove('sort_ascending');
-    other.classList.remove('sort_descending');
 
     document.querySelector('.tree_container').remove();
 
     if (this.classList.contains('header_name')) {
-        sortFolderName(root, ascending);
-    } else {
-        sortFolderSize(root, ascending);
+        sortFolderName(root, isAscending);
+    } else if (this.classList.contains('header_files')) {
+        sortFolderFiles(root, isAscending);
+    } else if (this.classList.contains('header_size')) {
+        sortFolderSize(root, isAscending);
     }
+
 
     var treeContainer = createTree();
     fileList.append(treeContainer);
@@ -398,11 +421,20 @@ treeStyle.innerHTML = `
     margin-left: 0.3em;
     font-size: 10pt;
 }
-.header_name {
+.header_item {
     cursor: pointer;
 }
-.header_size {
-    cursor: pointer;
+.header_left {
+    display: flex;
+    justify-content: start;
+    gap: 150px;
+    flex-grow: 4;
+}
+.header_right {
+    display: flex;
+    justify-content: end;
+    gap: 3.5em;
+    flex-grow: 1;
 }
 .header_tools {
     display: flex;
