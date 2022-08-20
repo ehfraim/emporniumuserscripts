@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         empornium better filelist
-// @version      2.2.1
+// @version      2.2.2
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
 // @namespace    empornium
@@ -111,7 +111,9 @@ function getFileType(fileName) {
 function makeFolderDom(folder) {
     var folderElement = ce('div', 'folder');
     var folderDetails = ce('div', 'folder_details folder_closed tree_item');
-    folderDetails.innerHTML = `<span class="folder_name">${folder.name}</span><span class="folder_size">${formatBytes(folder.byteSize)}</span>`;
+    folderDetails.innerHTML = `<span class="folder_name">${folder.name}</span>
+        <span class="folder_files">${folder.files.length} files</span>
+        <span class="folder_size">${formatBytes(folder.byteSize)}</span>`;
     folderElement.append(folderDetails);
     var container = ce('div', 'folder_container');
     folderDetails.addEventListener('click', toggleCollapsed);
@@ -128,7 +130,10 @@ function makeFolderDom(folder) {
         var fileList = ce('ul', 'file_list');
         for (var file of folder.files) {
             var filei = ce('li', 'file_item tree_item');
-            filei.innerHTML = `<div class="icon_stack"><i class="font_icon file_icons ${getFileType(file.name)}"></i></div><span class="file_name">${file.name}</span><span class="file_size">${file.size}</span>`;
+            filei.innerHTML = `<div class="icon_stack">
+                <i class="font_icon file_icons ${getFileType(file.name)}"></i>
+                </div><span class="file_name">${file.name}</span>
+                <span class="file_size">${file.size}</span>`;
             fileList.append(filei);
         }
         container.append(fileList);
@@ -461,9 +466,16 @@ treeStyle.innerHTML = `
 .folder_name {
     flex: 1;
 }
+.folder_files {
+    font-size: 9pt;
+    min-width: 7em;
+    text-align: end;
+}
 .folder_size {
     padding-right: 1em;
     font-size: 9pt;
+    min-width: 7em;
+    text-align: end;
 }
 .file_item {
     display: flex;
