@@ -8,14 +8,14 @@
 // @exclude        /https?://www\.empornium\.(is|me|sx)/torrents\.php\?action=notify/
 // @downloadURL    https://greasyfork.org/scripts/441810-empornium-coalesce-variations/code/Empornium%20coalesce%20variations.user.js
 // @grant          none
-// @version        7.3.4
+// @version        7.3.5
 // ==/UserScript==
 
 const variationRegexes = [
   // VR
-  /(?:desktop|gearvr\/?daydream|gear|daydream(?: view)|smartphone|mobile|oculus\/?(?:vive)(?: rift)?|oculus\/?(?: ?go)?|go \dk|vive|PlayStationVR PS4|playstation|psvr)(?: ?vr)?/ig,
+  /(?:desktop|gearvr|smartphone|mobile|oculus\/?(?:vive)(?: rift)?|oculus\/?(?: ?go)?|go \dk|vive|PlayStationVR PS4|playstation|psvr)(?: ?vr)?/ig,
   // resolutions
-  /\d+ ?px|\d+p(?:\d+)?|sd(?!\w)|hd(?!\w)|4kuhd| 4k|uhd|fullhd|ultrahd|standard|\b[1-9]{1}k(?!\w)|\d+p?x\d+p?\s?(?:px)?|480lp|480|360|720|1080|2160|(?:\d+ ?MP)/ig,
+  /\d+ ?px|\d+p(?:\d+)?|sd(?!\w)|hd(?!\w)|4kuhd| 4k|uhd|fullhd|ultrahd|standard|\b[1-9]{1}k(?!\w)|\d+p?[x\ ]+\d+p?\s?(?:px)?|480lp|480|360|720|1080|2160|(?:\d+ ?MP)/ig,
   // bitrate
   /(?:\d+(?:\.\d+)?\s?(?:k|m)?bps)|mobile-(?:high|medium|low)|mobile|(?:low|medium|high|higher) ?bitrate/ig,
   // extras
@@ -23,7 +23,7 @@ const variationRegexes = [
   // framerate
   /\d+(?:\.\d+)?\s?fps/ig,
   // encoding
-  /h\.?265|x\.?265|hevc|hvec|avc|h\.?264|x\.?264|re-?encode|reencoded|rencoded|lower bitrate|lq|hq|original/ig,
+  /h\.?265|x\.?265|hevc|hvec|avc|h\.?264|x\.?264|re-?encode|reencoded|rencoded|lower bitrate|lq|hq|original|10bit/ig,
   // filetype
   /mpeg4|3gp|mp4|wmv|mkv|blu-ray/ig,
   // reported torrents
@@ -242,8 +242,7 @@ function charSoup(_string) {
     /{Se7enSeas}|{The Rat Bastards}/gi, // group names
     /( in )/gi, // connecting words
     /\.(com|org)/gi, // TLDs
-    /\[[\w\s/-]+\]/, // anything in brackets, like different websites
-    /[\s\W]/gi, // non word characters and whitespace
+    /\[[\w\s/-]+\]/g, // anything in brackets, like different websites
     /\d{2,4}[-\.]\d+[-\.]\d{2,4}/gi // dates
   ];
   for (const ex of irrelevant) {
@@ -252,6 +251,7 @@ function charSoup(_string) {
       string = shorterString;
     }
   }
+  string = string.replace(/[\s\W]/gi, ''); // non word characters and whitespace
   string = string.toLowerCase();
   soupCache.set(_string, string);
   return string;
