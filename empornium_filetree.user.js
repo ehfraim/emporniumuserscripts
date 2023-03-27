@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         empornium better filelist
-// @version      2.2.2
+// @version      2.2.5
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
 // @namespace    empornium
@@ -95,7 +95,7 @@ function getFileType(fileName) {
     if (type) return `icon_files_video file_type_${type[1]}`;
     type = fileName.match(/\.(txt|srt)$/i);
     if (type) return `icon_files_text file_type_${type[1]}`;
-    type = fileName.match(/\.(zip|rar)$/i);
+    type = fileName.match(/\.(zip|rar|7z)$/i);
     if (type) return `icon_files_compressed file_type_${type[1]}`;
     type = fileName.match(/\.(iso|vob)$/i);
     if (type) return `icon_files_disc file_type_${type[1]}`;
@@ -109,10 +109,11 @@ function getFileType(fileName) {
 
 
 function makeFolderDom(folder) {
+    var noFiles = folder.files.length;
     var folderElement = ce('div', 'folder');
     var folderDetails = ce('div', 'folder_details folder_closed tree_item');
     folderDetails.innerHTML = `<span class="folder_name">${folder.name}</span>
-        <span class="folder_files">${folder.files.length} files</span>
+        <span class="folder_files ${!noFiles ? " hidden":''}">${noFiles} ${noFiles == 1 ? "file":"files"}</span>
         <span class="folder_size">${formatBytes(folder.byteSize)}</span>`;
     folderElement.append(folderDetails);
     var container = ce('div', 'folder_container');
