@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         empornium better filelist
-// @version      2.2.5
+// @version      2.3
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
 // @namespace    empornium
@@ -112,8 +112,16 @@ function makeFolderDom(folder) {
     var noFiles = folder.files.length;
     var folderElement = ce('div', 'folder');
     var folderDetails = ce('div', 'folder_details folder_closed tree_item');
+    var contains = '';
+    if (folder.files.length > 1) {
+      contains = `${folder.files.length} files`;
+    } else if (folder.files.length == 1) {
+      contains = '1 file';
+    } else if (!folder.files.length && !folder.folders.length) {
+      contains = 'empty';
+    }
     folderDetails.innerHTML = `<span class="folder_name">${folder.name}</span>
-        <span class="folder_files ${!noFiles ? " hidden":''}">${noFiles} ${noFiles == 1 ? "file":"files"}</span>
+        <span class="folder_files">${contains}</span>
         <span class="folder_size">${formatBytes(folder.byteSize)}</span>`;
     folderElement.append(folderDetails);
     var container = ce('div', 'folder_container');
