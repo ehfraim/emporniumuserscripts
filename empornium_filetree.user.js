@@ -109,7 +109,6 @@ function getFileType(fileName) {
 
 
 function makeFolderDom(folder) {
-    var noFiles = folder.files.length;
     var folderElement = ce('div', 'folder');
     var folderDetails = ce('div', 'folder_details folder_closed tree_item');
     var contains = '';
