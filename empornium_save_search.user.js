@@ -3,9 +3,9 @@
 // @namespace    https://www.empornium.me/
 // @description  Saves searches in browser storage
 // @author       ephraim
-// @include      https://www.empornium.me/torrents.php*
-// @include      https://www.empornium.sx/torrents.php*
-// @include      https://www.empornium.is/torrents.php*
+// @match        https://www.empornium.me/torrents.php*
+// @match        https://www.empornium.sx/torrents.php*
+// @match        https://www.empornium.is/torrents.php*
 // @version      4.2
 // @grant        GM_setValue
 // @grant        GM_getValue
