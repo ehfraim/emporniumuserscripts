@@ -13,19 +13,20 @@
 // @version        7.4
 // ==/UserScript==
 
+
 const variationRegexes = [
   // VR
-  /(?:desktop|gearvr|smartphone|mobile|oculus\/?(?:vive)(?: rift)?|oculus\/?(?: ?go)?|go \dk|vive|PlayStationVR PS4|playstation|psvr)(?: ?vr)?/ig,
+  /(?:desktop|gearvr|gear|smartphone|mobile|oculus\/?(?:vive)(?: rift)?|oculus\/?(?: ?go)?|go \dk|vive|PlayStationVR PS4|playstation|psvr)(?: ?vr)?/ig,
   // resolutions
   /\d+ ?px|\d+p(?:\d+)?|sd(?!\w)|hd(?!\w|\W)|\[hd\]|4kuhd| 4k|uhd|fullhd|ultrahd|standard|\b[1-9]{1}k(?!\w)|\d+p?\s?x\s?\d+p?\s?(?:px)?|480lp|480|360|720|1080|2160|(?:\d+ ?MP)/ig,
   // bitrate
   /(?:\d+(?:\.\d+)?\s?(?:k|m)?bps)|mobile-(?:high|medium|low)|mobile|(?:low|medium|high|higher) ?bitrate/ig,
   // extras
-  /bts|(hq )*image *set|images|(?:with )?picset|\+?pictures|\+?photoset|pics|pic set|x\d+|uhq|\d+\s?pics|requested|request|req|(first|second) (camera|cam)|best cut|split scenes/ig,
+  /bts|(hq )*image *set|images|(?:with )?picset|\+?pictures|\+?photoset|pics|pic set|\bx\d+|uhq|\d+\s?pics|(first|second) (camera|cam)|best cut|split scenes/ig,
   // framerate
   /\d+(?:\.\d+)?\s?fps/ig,
   // encoding
-  /h\.?265|x\.?265|hevc|hvec|avc|h\.?264|x\.?264|re-?encode|reencoded|rencoded|lower bitrate|lq|hq|original|10bit/ig,
+  /h\.?265|x\.?265|hevc|hvec|avc|h\.?264|x\.?264|reencoded|rencoded|reencode|re-encode|lower bitrate|lq|hq|original|10bit/ig,
   // filetype
   /mpeg4|3gp|mp4|wmv|mkv|blu-ray/ig,
   // reported torrents
@@ -241,7 +242,7 @@ function charSoup(_string) {
 
   let string = _string;
   const irrelevant = [
-    /{Se7enSeas}|{The Rat Bastards}/gi, // group names
+    /{Se7enSeas}|{The Rat Bastards}|requested|request|req/gi, // group names and requests
     /( in )/gi, // connecting words
     /\.(com|org)/gi, // TLDs
     /\[[\w\s/-]+\]/g, // anything in brackets, like different websites
