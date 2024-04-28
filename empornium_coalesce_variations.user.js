@@ -3,12 +3,16 @@
 // @author         ephraim
 // @namespace      empornium
 // @description    Combines torrents of different variations to one row
-// @include        /https?://www\.empornium\.(is|me|sx)/(torrents|user)\.php/
-// @match          http*://www.empornium.*/torrents.php
-// @match          http*://www.empornium.*/user.php
+// @match          http*://www.empornium.is/torrents.php*
+// @match          http*://www.empornium.is/user.php*
+// @match          http*://www.empornium.me/torrents.php*
+// @match          http*://www.empornium.me/user.php*
+// @match          http*://www.empornium.sx/torrents.php*
+// @match          http*://www.empornium.sx/user.php*
 // @exclude        /https?://www\.empornium\.(is|me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(is|me|sx)/torrents\.php\?action=notify/
 // @downloadURL    https://greasyfork.org/scripts/441810-empornium-coalesce-variations/code/Empornium%20coalesce%20variations.user.js
+// @updateURL      https://greasyfork.org/scripts/441810-empornium-coalesce-variations/code/Empornium%20coalesce%20variations.user.js
 // @grant          none
 // @version        7.4
 // ==/UserScript==
@@ -242,10 +246,11 @@ function charSoup(_string) {
 
   let string = _string;
   const irrelevant = [
-    /{Se7enSeas}|{The Rat Bastards}|requested|request|req/gi, // group names and requests
-    /( in )/gi, // connecting words
-    /\.(com|org)/gi, // TLDs
+    /Se7enSeas|The Rat Bastards|requested|request|req/gi, // group names and requests
+    /\b(?:in|and)\b/gi, // connecting words
+    /\.(?:com|org)/gi, // TLDs
     /\[[\w\s/-]+\]/g, // anything in brackets, like different websites
+    /VivThomas|Mofos/i, // website names
     /\d{2,4}[-\.]\d+[-\.]\d{2,4}/gi // dates
   ];
   for (const ex of irrelevant) {
