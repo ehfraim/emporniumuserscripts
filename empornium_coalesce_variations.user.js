@@ -4,11 +4,13 @@
 // @namespace      empornium
 // @description    Combines torrents of different variations to one row
 // @include        /https?://www\.empornium\.(is|me|sx)/(torrents|user)\.php/
+// @match          http*://www.empornium.*/torrents.php
+// @match          http*://www.empornium.*/user.php
 // @exclude        /https?://www\.empornium\.(is|me|sx)/torrents\.php\?id=/
 // @exclude        /https?://www\.empornium\.(is|me|sx)/torrents\.php\?action=notify/
 // @downloadURL    https://greasyfork.org/scripts/441810-empornium-coalesce-variations/code/Empornium%20coalesce%20variations.user.js
 // @grant          none
-// @version        7.3.6
+// @version        7.4
 // ==/UserScript==
 
 const variationRegexes = [
