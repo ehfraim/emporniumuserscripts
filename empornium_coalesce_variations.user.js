@@ -3,18 +3,18 @@
 // @author         ephraim
 // @namespace      empornium
 // @description    Combines torrents of different variations to one row
-// @match          http*://www.empornium.is/torrents.php*
-// @match          http*://www.empornium.is/user.php*
-// @match          http*://www.empornium.me/torrents.php*
-// @match          http*://www.empornium.me/user.php*
-// @match          http*://www.empornium.sx/torrents.php*
-// @match          http*://www.empornium.sx/user.php*
-// @exclude        /https?://www\.empornium\.(is|me|sx)/torrents\.php\?id=/
-// @exclude        /https?://www\.empornium\.(is|me|sx)/torrents\.php\?action=notify/
+// @match          https://www.empornium.is/torrents.php*
+// @match          https://www.empornium.is/user.php*
+// @match          https://www.empornium.me/torrents.php*
+// @match          https://www.empornium.me/user.php*
+// @match          https://www.empornium.sx/torrents.php*
+// @match          https://www.empornium.sx/user.php*
+// @exclude        /https://www\.empornium\.(is|me|sx)/torrents\.php\?id=/
+// @exclude        /https://www\.empornium\.(is|me|sx)/torrents\.php\?action=notify/ 
 // @downloadURL    https://greasyfork.org/scripts/441810-empornium-coalesce-variations/code/Empornium%20coalesce%20variations.user.js
 // @updateURL      https://greasyfork.org/scripts/441810-empornium-coalesce-variations/code/Empornium%20coalesce%20variations.user.js
 // @grant          none
-// @version        7.4
+// @version        7.5
 // ==/UserScript==
 
 
@@ -262,6 +262,7 @@ function charSoup(_string) {
   string = string.replace(/[\s\W]/gi, ''); // non word characters and whitespace
   string = string.toLowerCase();
   soupCache.set(_string, string);
+
   return string;
 }
 

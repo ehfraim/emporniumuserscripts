@@ -259,7 +259,7 @@ function getDescription(search) {
 var style = document.createElement('style');
 style.innerHTML = `
 #searchList {
-    column-count: 5;
+    column-count: 7;
     column-rule: dotted thin #d8d8d8;
     column-gap: 2em;
 }
