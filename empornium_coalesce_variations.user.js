@@ -10,11 +10,11 @@
 // @match          https://www.empornium.sx/torrents.php*
 // @match          https://www.empornium.sx/user.php*
 // @exclude        /https://www\.empornium\.(is|me|sx)/torrents\.php\?id=/
-// @exclude        /https://www\.empornium\.(is|me|sx)/torrents\.php\?action=notify/ 
+// @exclude        /https://www\.empornium\.(is|me|sx)/torrents\.php\?action=notify/
 // @downloadURL    https://greasyfork.org/scripts/441810-empornium-coalesce-variations/code/Empornium%20coalesce%20variations.user.js
 // @updateURL      https://greasyfork.org/scripts/441810-empornium-coalesce-variations/code/Empornium%20coalesce%20variations.user.js
 // @grant          none
-// @version        7.5
+// @version        7.5.1
 // ==/UserScript==
 
 
@@ -30,7 +30,7 @@ const variationRegexes = [
   // framerate
   /\d+(?:\.\d+)?\s?fps/ig,
   // encoding
-  /h\.?265|x\.?265|hevc|hvec|avc|h\.?264|x\.?264|reencoded|rencoded|reencode|re-encode|lower bitrate|lq|hq|original|10bit/ig,
+  /h\.?265|x\.?265|hevc|hvec|avc|h\.?264|x\.?264|SVT-AV1|AV1|reencoded|rencoded|reencode|re-encode|lower bitrate|lq|hq|original|10bit/ig,
   // filetype
   /mpeg4|3gp|mp4|wmv|mkv|blu-ray/ig,
   // reported torrents
