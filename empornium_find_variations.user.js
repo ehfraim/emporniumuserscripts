@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         empornium find variations
 // @namespace    http://empornium.is
-// @version      0.2
+// @version      0.2.1
 // @description  Look up and insert a list of variations of the torrent currently being viewed
 // @author       ephraim
 // @match        https://www.empornium.is/torrents.php?id=*
