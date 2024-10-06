@@ -1,13 +1,15 @@
 // ==UserScript==
 // @name         empornium find variations
 // @namespace    http://empornium.is
-// @version      0.1
+// @version      0.2
 // @description  Look up and insert a list of variations of the torrent currently being viewed
 // @author       ephraim
 // @match        https://www.empornium.is/torrents.php?id=*
 // @match        https://www.empornium.me/torrents.php?id=*
 // @match        https://www.empornium.sx/torrents.php?id=*
 // @grant        none
+// @downloadURL https://update.greasyfork.org/scripts/511407/empornium%20find%20variations.user.js
+// @updateURL https://update.greasyfork.org/scripts/511407/empornium%20find%20variations.meta.js
 // ==/UserScript==
 
 const variationRegexes = [
@@ -57,7 +59,7 @@ function extractVariation(title) {
 
 
 async function findVariations(e) {
-    var title = e.target.dataset.cleanTitle
+    var title = document.getSelection().toString() || e.target.dataset.cleanTitle
     e.target.onclick = ''
     var r = await fetch(`/torrents.php?title=${title.replaceAll(/\s/g, '+')}`, { credentials: 'same-origin' })
     var t = await r.text()
@@ -67,7 +69,7 @@ async function findVariations(e) {
     var resultTable = doc.querySelector('#torrent_table')
     var torrents = resultTable.querySelectorAll('.torrent')
     // only keep the first results since the search results could have other torrents
-    var firstTorrents = [...torrents].slice(0, 5)
+    var firstTorrents = [...torrents].slice(0, 10)
     torrents.forEach(t => t.remove())
     var resultBody = resultTable.querySelector('tbody')
     firstTorrents.forEach(t => { console.log(t); resultBody.append(t) })
