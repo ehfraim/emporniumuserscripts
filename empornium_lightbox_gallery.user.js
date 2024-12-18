@@ -9,8 +9,8 @@
 // @match        https://www.empornium.sx/torrents.php?id=*
 // @grant        GM_addElement
 // @require      https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js
-// @downloadURL https://update.sleazyfork.org/scripts/521153/empornium%20lightbox%20gallery.user.js
-// @updateURL https://update.sleazyfork.org/scripts/521153/empornium%20lightbox%20gallery.meta.js
+// @downloadURL  https://update.sleazyfork.org/scripts/521153/empornium%20lightbox%20gallery.user.js
+// @updateURL    https://update.sleazyfork.org/scripts/521153/empornium%20lightbox%20gallery.meta.js
 // ==/UserScript==
 
 GM_addElement('link', {
