@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         empornium lightbox gallery
 // @namespace    https://www.empornium.sx
-// @version      1.1.0
+// @version      1.1.1
 // @description  Add a lightbox gallery to torrent pages
 // @author       ephraim
 // @match        https://www.empornium.is/torrents.php?id=*
@@ -94,6 +94,7 @@ images.forEach(a => {
 Fancybox.bind('[data-fancybox="gallery"]', {
   wheel: "slide",
   animationDuration: 100,
+  contentClick: "toggleCover",
   contentDblClick: "zoomToMax",
   Toolbar: {
     display: {
