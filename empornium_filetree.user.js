@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         empornium better filelist
-// @version      2.3
+// @version      3
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
 // @namespace    empornium
@@ -9,6 +9,9 @@
 // @match        https://www.empornium.sx/torrents.php?id=*
 // @grant        none
 // ==/UserScript==
+
+
+var urlMap = {};
 
 
 function tree(folder) {
@@ -31,6 +34,8 @@ function tree(folder) {
                 folders.push(newFolder);
             }
         } else {
+            var urlName = f.name.replace(/[^\w\s-\.]/g, '').replace(/\s/g, '-').replace(/\.\w+$/, '').replace(/\.\w{3}$/, '');
+            f.url = urlMap[urlName];
             files.push(f);
         }
     });
@@ -113,11 +118,11 @@ function makeFolderDom(folder) {
     var folderDetails = ce('div', 'folder_details folder_closed tree_item');
     var contains = '';
     if (folder.files.length > 1) {
-      contains = `${folder.files.length} files`;
+        contains = `${folder.files.length} files`;
     } else if (folder.files.length == 1) {
-      contains = '1 file';
+        contains = '1 file';
     } else if (!folder.files.length && !folder.folders.length) {
-      contains = 'empty';
+        contains = 'empty';
     }
     folderDetails.innerHTML = `<span class="folder_name">${folder.name}</span>
         <span class="folder_files">${contains}</span>
@@ -138,15 +143,19 @@ function makeFolderDom(folder) {
         var fileList = ce('ul', 'file_list');
         for (var file of folder.files) {
             var filei = ce('li', 'file_item tree_item');
+            var nameElement = file.url ? `<a href="${file.url}" data-caption="${file.name}" class="file_preview">${file.name}</a>` : `${file.name}`;
             filei.innerHTML = `<div class="icon_stack">
                 <i class="font_icon file_icons ${getFileType(file.name)}"></i>
-                </div><span class="file_name">${file.name}</span>
+                </div><span class="file_name">${nameElement}</span>
                 <span class="file_size">${file.size}</span>`;
             fileList.append(filei);
         }
         container.append(fileList);
     }
     folderElement.append(container);
+
+
+
     return folderElement;
 }
 
@@ -163,6 +172,40 @@ function createTree() {
     var firstFolder = treeContainer.querySelector('.folder_closed');
     firstFolder.classList.remove('folder_closed');
     firstFolder.classList.add('folder_open');
+    if (window.Fancybox) {
+        Fancybox.bind('.file_name a', {
+            wheel: false,
+            animationDuration: 100,
+            contentDblClick: "zoomToMax",
+            groupAll: false,
+            Toolbar: {
+                display: {
+                    left: ["infobar"],
+                    middle: [
+                        "zoomIn",
+                        "zoomOut",
+                        "toggle1to1",
+                        "rotateCCW",
+                        "rotateCW",
+                    ],
+                    right: ["close"],
+                },
+            },
+            Carousel: {
+                Dots: false,
+                infinite: false,
+            },
+            Thumbs: false,
+            Images: {
+                Panzoom: {
+                    maxScale: 2,
+                    panMode: "mousemove",
+                    mouseMoveFriction: 0.2,
+                    mouseMoveFactor: 1.2
+                }
+            }
+        });
+    }
 
     return treeContainer;
 }
@@ -172,6 +215,7 @@ function clearFilter(e) {
     this.value = '';
     filterList(e);
 }
+
 
 function filterList(e) {
     var container = document.querySelector('.tree_container');
@@ -192,7 +236,8 @@ function filterList(e) {
         var hit = f.textContent.match(needle);
         var fileItem = f.parentElement;
         if (hit) {
-            f.innerHTML = wrapMatch(f.textContent, hit);
+            var el = f.querySelector('a') || f;
+            el.innerHTML = wrapMatch(el.innerText, hit);
             fileItem.classList.remove('hidden');
             fileItem.classList.add('file_found');
         } else {
@@ -214,7 +259,8 @@ function filterList(e) {
             }
             if (hit) {
                 var folderName = folder.querySelector('.folder_name');
-                folderName.innerHTML = wrapMatch(folderName.textContent, hit);
+                var el = folderName.querySelector('a') || folderName;
+                el.innerHTML = wrapMatch(el.innerText, hit);
             }
         } else {
             folder.classList.remove('file_found');
@@ -225,6 +271,14 @@ function filterList(e) {
     container.querySelector('.folder').classList.remove('hidden');
     container.classList.remove('hidden');
 }
+
+
+function wrapMatch(text, match) {
+    var matchElement = ce('span', 'filter_match');
+    matchElement.textContent = match[0];
+    return text.replaceAll(match, matchElement.outerHTML);
+}
+
 
 function expandAllFolders(e) {
     e.preventDefault();
@@ -246,6 +300,7 @@ function expandAllFolders(e) {
         this.innerText = this.innerText.replace('📂Collapse', '📁Expand');
     }
 }
+
 
 function list2Tree() {
     var tabl = fileList.querySelector('table');
@@ -270,7 +325,7 @@ function list2Tree() {
     var headerFiles = ce('span', 'header_files header_item');
     headerFiles.innerText = 'Files';
     headerFiles.addEventListener('click', sortTree);
-    var headerSize = ce('span', 'header_size header_item');
+    var headerSize = ce('span', 'header_size header_item sort_ascending');
     headerSize.innerText = 'Size';
     headerSize.addEventListener('click', sortTree);
     headerName.dataset.type = 'header_name';
@@ -289,10 +344,10 @@ function list2Tree() {
     filterInput.addEventListener('keyup', clearFilter);
     expand.addEventListener('click', expandAllFolders);
     tools.append(expand, filterInput);
-    var headerLeft = ce('span', 'header_left')
-    var headerRight = ce('span', 'header_right')
-    headerLeft.append(headerName, tools)
-    headerRight.append(headerFiles, headerSize)
+    var headerLeft = ce('span', 'header_left');
+    var headerRight = ce('span', 'header_right');
+    headerLeft.append(headerName, tools);
+    headerRight.append(headerFiles, headerSize);
     header.append(headerLeft, headerRight);
     fileList.append(header);
 
@@ -300,6 +355,7 @@ function list2Tree() {
     fileList.append(treeContainer);
     fileList.classList.remove('hidden');
 }
+
 
 function sortFolderSize(folder, ascending) {
     var direction = ascending ? 1 : -1;
@@ -314,6 +370,7 @@ function sortFolderSize(folder, ascending) {
     });
 }
 
+
 function sortFolderFiles(folder, ascending) {
     var direction = ascending ? 1 : -1;
     folder.folders.sort((a, b) => {
@@ -323,6 +380,7 @@ function sortFolderFiles(folder, ascending) {
         sortFolderFiles(f, ascending);
     });
 }
+
 
 function sortFolderName(folder, ascending) {
     var direction = ascending ? -1 : 1;
@@ -346,9 +404,9 @@ function sortTree() {
     } else {
         this.classList.add('sort_ascending');
         this.classList.remove('sort_descending');
-    }    
+    }
 
-    var others = this.parentElement.querySelectorAll(`.header_item:not(.${this.dataset.type})`)
+    var others = this.parentElement.querySelectorAll(`.header_item:not(.${this.dataset.type})`);
     for (var other of others) {
         other.classList.remove('sort_ascending');
         other.classList.remove('sort_descending');
@@ -369,18 +427,20 @@ function sortTree() {
     fileList.append(treeContainer);
 }
 
-function wrapMatch(text, match) {
-    var matchElement = ce('span', 'filter_match');
-    matchElement.textContent = match[0];
-    return text.replaceAll(match, matchElement.outerHTML);
-}
-
 
 var fileList = document.querySelector('div[id^="files_"]');
 var fileListToggle = document.querySelector('a[onclick^="show_files"]');
 fileListToggle.text = '(Show file tree)';
 var root = {};
 fileListToggle.onclick = function toggleTree() {
+    var images = document.querySelectorAll('a[data-fancybox]');
+    images.forEach(i => {
+        var url = i.href;
+        var name = url.split('/').pop();
+        name = name.replace(/\.\w+$/, '').replace(/\.\w{3}$/, ''); // remove file extension
+        urlMap[name] = url;
+    });
+
     if (this.classList.contains('open_tree')) {
         this.text = '(Show file tree)';
     } else {
@@ -528,6 +588,13 @@ treeStyle.innerHTML = `
     flex: 1;
     margin-left: 0.5em;
 }
+.file_preview {
+    color:inherit;
+}
+.file_preview::after {
+    content: '👁';
+    padding-left: 0.5em;
+}
 .file_size {
     padding-right: 1em;
 }
@@ -536,8 +603,9 @@ treeStyle.innerHTML = `
     background-color: yellow;
 }
 .tree_item:hover {
-    transform: scale(1.002);
-    box-shadow: 2px 1px 8px #0006;
+    /*transform: scale(1.002);
+    box-shadow: 2px 1px 8px #0006;*/
+    background-color: #6baad040;
 }
 .file_item .font_icon {
     font-size: 10pt;

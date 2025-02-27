@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         empornium lightbox gallery
 // @namespace    https://www.empornium.sx
-// @version      1.0.0
+// @version      1.1.0
 // @description  Add a lightbox gallery to torrent pages
 // @author       ephraim
 // @match        https://www.empornium.is/torrents.php?id=*
@@ -19,11 +19,14 @@ GM_addElement('link', {
   href: "https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"
 })
 
+// make fancybox available to the page and other scripts
+unsafeWindow.Fancybox = Fancybox
+
 var descbox = document.querySelector('#descbox')
 
-//make thumbnails of fullsize images
+// make thumbnails of fullsize images
 var jerkingSrcQuery = `img[src*="jerking.empornium"]:not([src*=".th."], [src*=".md."], [src*="poster" i],
-                      [src$=".png"],[src$="cast11.jpg"], [src$="plot11.jpg"], [src$="info11.jpg"], [src$="screens11.jpg"])`
+                      [src$=".png"],[src$="cast11.jpg"], [src$="plot11.jpg"], [src$="info11.jpg"], [src$="screens11.jpg"], [src$="finger-pointing-down.gif"])`
 var fappingSrcQuery = jerkingSrcQuery.replace('jerking', 'fapping')
 var srcQuery = `${jerkingSrcQuery}, ${fappingSrcQuery}`
 var dataSrcQuery = srcQuery.replaceAll('[src', '[data-src')
