@@ -259,7 +259,7 @@ function filterList(e) {
     var needle = new RegExp(this.value, 'i');
     container.querySelectorAll('.file_name').forEach(f => {
         var hit = f.textContent.match(needle);
-        var fileItem = f.parentElement;
+        var fileItem = f.closest('li');
         if (hit) {
             var el = f.querySelector('a') || f;
             el.innerHTML = wrapMatch(el.innerText, hit);
