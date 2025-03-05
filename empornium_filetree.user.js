@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         empornium better filelist
-// @version      2.5
+// @version      3.2
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
 // @namespace    empornium
@@ -8,6 +8,8 @@
 // @match        https://www.empornium.me/torrents.php?id=*
 // @match        https://www.empornium.sx/torrents.php?id=*
 // @grant        none
+// @downloadURL  https://update.sleazyfork.org/scripts/433858/empornium%20better%20filelist.user.js
+// @updateURL    https://update.sleazyfork.org/scripts/433858/empornium%20better%20filelist.user.js
 // ==/UserScript==
 
 
