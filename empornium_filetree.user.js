@@ -13,18 +13,16 @@
 
 var urlMap = {};
 
+const combinedPattern = new RegExp(
+    '(?:thumb|screen|preview)\\w*|' + // "_thumbs etc"
+    '[\\W_]|' + // non-word characters
+    'jpg|jpeg|bmp|png|gif|' + // image file extensions
+    'mp4|avi|m4v|mpg|mpeg|mkv|mov|wmv|flv|vob', // video file extensions
+    'ig' // global
+);
+
 function nameHash(name) {
-    var blockList = [
-        /_thumb\w+/g, // "_thumbs"
-        /\W/g, // non-word characters
-        /jpg|jpeg|bmp|png|gif/g, // image file extensions
-        /mp4|avi|m4v|mpg|mpeg|mkv|mov|wmv|flv|vob/g // video file extensions
-    ]
-    var hash = name.toLowerCase()
-    blockList.forEach(b => {
-        hash = hash.replace(b, '')
-    })
-    return hash
+    return name.toLowerCase().replace(combinedPattern, '');
 }
 
 
