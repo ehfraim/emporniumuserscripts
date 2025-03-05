@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         empornium better filelist
-// @version      3.1
+// @version      2.5
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
 // @namespace    empornium
@@ -13,16 +13,18 @@
 
 var urlMap = {};
 
-const combinedPattern = new RegExp(
-    '_th\\w+|' +      // "_thumbs"
-    '\\W|' +          // non-word characters
-    'jpg|jpeg|bmp|png|gif|' +  // image file extensions
-    'mp4|avi|m4v|mpg|mpeg|mkv|mov|wmv|flv|vob',  // video file extensions
-    'g'  // global
-);
-
 function nameHash(name) {
-    return name.toLowerCase().replace(combinedPattern, '');
+    var blockList = [
+        /_thumb\w+/g, // "_thumbs"
+        /\W/g, // non-word characters
+        /jpg|jpeg|bmp|png|gif/g, // image file extensions
+        /mp4|avi|m4v|mpg|mpeg|mkv|mov|wmv|flv|vob/g // video file extensions
+    ]
+    var hash = name.toLowerCase()
+    blockList.forEach(b => {
+        hash = hash.replace(b, '')
+    })
+    return hash
 }
 
 
@@ -154,16 +156,32 @@ function makeFolderDom(folder) {
         var fileList = ce('ul', 'file_list');
         for (var file of folder.files) {
             var filei = ce('li', 'file_item tree_item');
-            var nameElement = file.url ? `<a href="${file.url}" data-caption="${file.name}" class="file_preview">${file.name}</a>` : `${file.name}`;
-            filei.innerHTML = `<div class="icon_stack">
-                <i class="font_icon file_icons ${getFileType(file.name)}"></i>
-                </div><span class="file_name">${nameElement}</span>
-                <span class="file_size">${file.size}</span>`;
+            var istack = ce('div', 'icon_stack');
+            var icon = ce('i', `font_icon file_icons ${getFileType(file.name)}`);
+            istack.append(icon);
+            filei.append(istack);
+            var fname = ce('span', 'file_name');
+            fname.innerText = file.name;
+            if (file.url) {
+                var preview = ce('a', 'file_preview');
+                preview.href = file.url;
+                preview.dataset.caption = file.name;
+                preview.append(fname);
+                filei.append(preview);
+            } else {
+                filei.append(fname);
+            }
+            var fsize = ce('span', 'file_size');
+            fsize.innerText = file.size;
+            filei.append(fsize);
             fileList.append(filei);
         }
         container.append(fileList);
     }
     folderElement.append(container);
+
+
+
     return folderElement;
 }
 
@@ -181,9 +199,10 @@ function createTree() {
     firstFolder.classList.remove('folder_closed');
     firstFolder.classList.add('folder_open');
     if (window.Fancybox) {
-        Fancybox.bind('.file_name a', {
+        Fancybox.bind('.file_preview', {
             wheel: false,
             animationDuration: 100,
+            contentClick: "toggleCover",
             contentDblClick: "zoomToMax",
             groupAll: false,
             Toolbar: {
@@ -292,7 +311,6 @@ function expandAllFolders(e) {
     e.preventDefault();
     var closedFolders = document.querySelectorAll('.folder_closed');
     var openFolders = [...document.querySelectorAll('.folder_open')].slice(1);
-
     if (e.target.dataset.collapsed == 'collapsed') {
         closedFolders.forEach(f => {
             f.classList.add('folder_open');
@@ -602,6 +620,7 @@ treeStyle.innerHTML = `
 }
 .file_preview {
     color:inherit;
+    flex:1;
 }
 .file_preview::after {
     content: '👁';
