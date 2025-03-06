@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         empornium better filelist
-// @version      3.2
+// @version      3.3
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
 // @namespace    empornium
@@ -16,11 +16,11 @@
 var urlMap = {};
 
 const combinedPattern = new RegExp(
-    '(?:thumb|screen|preview)\\w*|' + // "_thumbs etc"
-    '[\\W_]|' + // non-word characters
-    'jpg|jpeg|bmp|png|gif|' + // image file extensions
-    'mp4|avi|m4v|mpg|mpeg|mkv|mov|wmv|flv|vob', // video file extensions
-    'ig' // global
+    '_?(?:thumb|screen|preview)[\\w\\.]*|' +      // "_thumbs"
+    '[\\W_]|' +          // non-word characters
+    'jpg|jpeg|bmp|png|gif|' +  // image file extensions
+    'mp4|avi|m4v|mpg|mpeg|mkv|mov|wmv|flv|vob',  // video file extensions
+    'ig'  // global
 );
 
 function nameHash(name) {
@@ -128,6 +128,7 @@ function getFileType(fileName) {
 
 function makeFolderDom(folder) {
     var folderElement = ce('div', 'folder');
+    folderElement.dataset.name = folder.name;
     var folderDetails = ce('div', 'folder_details folder_closed tree_item');
     var contains = '';
     if (folder.files.length > 1) {
@@ -165,7 +166,8 @@ function makeFolderDom(folder) {
             if (file.url) {
                 var preview = ce('a', 'file_preview');
                 preview.href = file.url;
-                preview.dataset.caption = file.name;
+                preview.dataset.caption = folder.name == '/' ? `${file.name}` : `${folder.name} / ${file.name}`;
+                preview.dataset.fancybox = `${folder.name}`;
                 preview.append(fname);
                 filei.append(preview);
             } else {
@@ -198,42 +200,6 @@ function createTree() {
     var firstFolder = treeContainer.querySelector('.folder_closed');
     firstFolder.classList.remove('folder_closed');
     firstFolder.classList.add('folder_open');
-    if (window.Fancybox) {
-        Fancybox.bind('.file_preview', {
-            wheel: false,
-            animationDuration: 100,
-            contentClick: "toggleCover",
-            contentDblClick: "zoomToMax",
-            groupAll: false,
-            Toolbar: {
-                display: {
-                    left: ["infobar"],
-                    middle: [
-                        "zoomIn",
-                        "zoomOut",
-                        "toggle1to1",
-                        "rotateCCW",
-                        "rotateCW",
-                    ],
-                    right: ["close"],
-                },
-            },
-            Carousel: {
-                Dots: false,
-                infinite: false,
-            },
-            Thumbs: false,
-            Images: {
-                Panzoom: {
-                    maxScale: 2,
-                    panMode: "mousemove",
-                    mouseMoveFriction: 0.2,
-                    mouseMoveFactor: 1.2
-                }
-            }
-        });
-    }
-
     return treeContainer;
 }
 
@@ -464,6 +430,47 @@ function findThumbnails() {
     });
 }
 
+
+function bindGallery() {
+    if (!window.Fancybox) return;
+    var fancyboxConfig = {
+        wheel: "slide",
+        animationDuration: 80,
+        contentClick: "toggleCover",
+        contentDblClick: "zoomToMax",
+        Toolbar: {
+            display: {
+                left: ["infobar"],
+                middle: [
+                    "zoomIn",
+                    "zoomOut",
+                    "toggle1to1",
+                    "rotateCCW",
+                    "rotateCW",
+                    "thumbs",
+                ],
+                right: ["close"],
+            },
+        },
+        Thumbs: {
+            type: "classic",
+            autoStart: false,
+            showOnStart: false
+        },
+        Images: {
+            Panzoom: {
+                maxScale: 2,
+                panMode: "mousemove",
+                mouseMoveFriction: 0.2,
+                mouseMoveFactor: 1.2
+            }
+        }
+    };
+    document.querySelectorAll('.folder:has(.file_preview)').forEach(folder => {
+        Fancybox.bind(`[data-fancybox="${folder.dataset.name}"]`, fancyboxConfig);
+    });
+}
+
 var fileList = document.querySelector('div[id^="files_"]');
 var fileListToggle = document.querySelector('a[onclick^="show_files"]');
 fileListToggle.text = '(Show file tree)';
@@ -480,6 +487,7 @@ fileListToggle.onclick = function toggleTree() {
     fileList.classList.toggle('hidden');
     if (!document.querySelector('.tree_container')) {
         list2Tree();
+        bindGallery();
     }
     return false;
 };
@@ -487,7 +495,6 @@ fileListToggle.onclick = function toggleTree() {
 var oldListItemOdd = fileList.querySelector('.rowa');
 var oldStyleOdd = getComputedStyle(oldListItemOdd);
 var treeStyle = ce('style');
-document.head.append(treeStyle);
 document.head.append(treeStyle);
 treeStyle.innerHTML = `
 .tree_container * {
