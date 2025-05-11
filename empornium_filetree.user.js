@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         empornium better filelist
-// @version      3.3.1
+// @version      3.3.2
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
 // @namespace    empornium
@@ -17,15 +17,13 @@
 var urlMap = {};
 
 const combinedPattern = new RegExp(
-    '_?(?:thumb|screen|preview)[\\w\\.]*|' +      // "_thumbs"
-    '[\\W_]|' +          // non-word characters
-    'jpg|jpeg|bmp|png|gif|' +  // image file extensions
-    'mp4|avi|m4v|mpg|mpeg|mkv|mov|wmv|flv|vob',  // video file extensions
-    'ig'  // global
-);
+    '(?:_?(?:thumb|screen|preview|s)s?)?\.(?:jpg|jpeg|bmp|png|gif|mp4|avi|m4v|mpg|mpeg|mkv|mov|wmv|flv|vob)', 'ig');
 
 function nameHash(name) {
-    return name.toLowerCase().replace(combinedPattern, '');
+    var hash = name.toLowerCase()
+    hash = hash.replaceAll(combinedPattern, ''); //thumbs etc and file extensions
+    hash = hash.replaceAll(/[\W_\[\]]/g, ''); // special characters
+    return hash;
 }
 
 
