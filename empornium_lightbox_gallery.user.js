@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         empornium lightbox gallery
 // @namespace    https://www.empornium.is
-// @version      1.2
+// @version      1.2.1
 // @description  add a lightbox gallery to torrent pages
 // @author       ephraim
 // @match        https://www.empornium.is/torrents.php?id=*
@@ -18,9 +18,6 @@ GM_addElement('link', {
   referrerpolicy: 'no-referrer',
   href: "https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"
 })
-
-// make fancybox available to the page and other scripts
-unsafeWindow.Fancybox = Fancybox
 
 var descbox = document.querySelector('#descbox')
 
