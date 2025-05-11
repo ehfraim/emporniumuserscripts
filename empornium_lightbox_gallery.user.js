@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         empornium lightbox gallery
 // @namespace    https://www.empornium.is
-// @version      1.2.1
+// @version      1.2
 // @description  add a lightbox gallery to torrent pages
 // @author       ephraim
 // @match        https://www.empornium.is/torrents.php?id=*
@@ -9,6 +9,7 @@
 // @match        https://www.empornium.sx/torrents.php?id=*
 // @grant        GM_addElement
 // @require      https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js
+// @inject-into  page
 // @downloadURL  https://update.sleazyfork.org/scripts/521153/empornium%20lightbox%20gallery.user.js
 // @updateURL    https://update.sleazyfork.org/scripts/521153/empornium%20lightbox%20gallery.meta.js
 // ==/UserScript==
@@ -18,6 +19,9 @@ GM_addElement('link', {
   referrerpolicy: 'no-referrer',
   href: "https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"
 })
+
+// make fancybox available to the page and other scripts
+unsafeWindow.Fancybox = Fancybox
 
 var descbox = document.querySelector('#descbox')
 
