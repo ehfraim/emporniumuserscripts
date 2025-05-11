@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         empornium lightbox gallery
 // @namespace    https://www.empornium.is
-// @version      1.2
+// @version      1.2.1.1
 // @description  add a lightbox gallery to torrent pages
 // @author       ephraim
 // @match        https://www.empornium.is/torrents.php?id=*
