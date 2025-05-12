@@ -8,7 +8,6 @@
 // @match        https://www.empornium.me/torrents.php?id=*
 // @match        https://www.empornium.sx/torrents.php?id=*
 // @grant        none
-// @inject-into  page
 // @downloadURL  https://update.sleazyfork.org/scripts/433858/empornium%20better%20filelist.user.js
 // @updateURL    https://update.sleazyfork.org/scripts/433858/empornium%20better%20filelist.user.js
 // ==/UserScript==
