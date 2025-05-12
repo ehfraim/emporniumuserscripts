@@ -1,27 +1,22 @@
 // ==UserScript==
 // @name         empornium lightbox gallery
 // @namespace    https://www.empornium.is
-// @version      1.2.1.1
+// @version      1.2.2
 // @description  add a lightbox gallery to torrent pages
 // @author       ephraim
 // @match        https://www.empornium.is/torrents.php?id=*
 // @match        https://www.empornium.me/torrents.php?id=*
 // @match        https://www.empornium.sx/torrents.php?id=*
 // @grant        GM_addElement
-// @require      https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js
-// @inject-into  page
+// @grant        GM_getResourceText
+// @resource     fancyboxJS https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js
+// @resource     fancyboxCSS https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css
 // @downloadURL  https://update.sleazyfork.org/scripts/521153/empornium%20lightbox%20gallery.user.js
 // @updateURL    https://update.sleazyfork.org/scripts/521153/empornium%20lightbox%20gallery.meta.js
 // ==/UserScript==
 
-GM_addElement('link', {
-  rel: 'stylesheet',
-  referrerpolicy: 'no-referrer',
-  href: "https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"
-})
-
-// make fancybox available to the page and other scripts
-unsafeWindow.Fancybox = Fancybox
+GM_addElement('style', { textContent: GM_getResourceText("fancyboxCSS") })
+GM_addElement('script', { textContent: GM_getResourceText("fancyboxJS") })
 
 var descbox = document.querySelector('#descbox')
 
@@ -58,8 +53,8 @@ document.querySelectorAll('a.lightbox-image + br').forEach(br => { br.remove() }
 
 //find links to fullsize images without thumbnails
 var fullsizeLinks = descbox.querySelectorAll('a[href*="jerking.empornium"]:not(:has(img)):not([href*="/album/"])',
-                                             'a[href*="fapping.empornium"]:not(:has(img)):not([href*="/album/"])',
-                                             'a[href*="hamster.is"]:not(:has(img)):not([href*="/album/"])')
+  'a[href*="fapping.empornium"]:not(:has(img)):not([href*="/album/"])',
+  'a[href*="hamster.is"]:not(:has(img)):not([href*="/album/"])')
 fullsizeLinks.forEach(f => {
   var th = document.createElement('img')
   th.className = 'bbcode scale_image'
