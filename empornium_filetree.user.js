@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         empornium better filelist
-// @version      3.3.2
+// @version      3.4
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
 // @namespace    empornium
@@ -337,9 +337,9 @@ function list2Tree() {
     tools.append(expand, filterInput);
     var headerLeft = ce('span', 'header_left');
     var headerRight = ce('span', 'header_right');
-    headerLeft.append(headerName, tools);
+    headerLeft.append(headerName);
     headerRight.append(headerFiles, headerSize);
-    header.append(headerLeft, headerRight);
+    header.append(headerLeft, tools, headerRight);
     fileList.append(header);
 
     var treeContainer = createTree();
@@ -530,33 +530,36 @@ treeStyle.innerHTML = `
 .header_left {
     display: flex;
     justify-content: start;
-    gap: 150px;
-    flex-grow: 4;
+    flex: 1;
 }
 .header_right {
     display: flex;
     justify-content: end;
-    gap: 3.5em;
-    flex-grow: 1;
+    gap: 2.5em;
+    flex: 1;
 }
 .header_tools {
     display: flex;
-    justify-content: space-between;
     align-items: baseline;
-    width: 400px;
+    flex: 3;
+    justify-content: center;
 }
 .header_expand {
     margin-right: 1em;
     font-weight: normal;
     font-size: 10pt;
+    flex: 1;
+    min-width: 8em;
+    max-width: 9em;
 }
 .header_filter {
     border: none;
     border-radius: 5px;
     background: #29374F;
     color: #bcd;
-    width: 20em;
+    max-width: 20em;
     padding: 4px;
+    flex: 3;
 }
 .file_list {
     padding-left: 0.5em;
