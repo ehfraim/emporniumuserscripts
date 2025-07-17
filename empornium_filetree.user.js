@@ -1,12 +1,18 @@
 // ==UserScript==
 // @name         empornium better filelist
-// @version      3.4
+// @version      3.4.1
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
 // @namespace    empornium
 // @match        https://www.empornium.is/torrents.php?id=*
 // @match        https://www.empornium.me/torrents.php?id=*
 // @match        https://www.empornium.sx/torrents.php?id=*
+// @match        https://www.homeporntorrents.club/torrents.php?id=*
+// @match        https://femdomcult.org/torrents.php?id=*
+// @match        https://sextorrent.eu/torrents.php?id=*
+// @match        https://kufirc.com/torrents.php?id=*
+// @match        https://pornbay.org/torrents.php?id=*
+// @match        http://pornbay.org/torrents.php?id=*
 // @grant        none
 // @downloadURL  https://update.sleazyfork.org/scripts/433858/empornium%20better%20filelist.user.js
 // @updateURL    https://update.sleazyfork.org/scripts/433858/empornium%20better%20filelist.user.js
