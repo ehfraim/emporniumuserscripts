@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         empornium lightbox gallery
 // @namespace    https://www.empornium.is
-// @version      1.2.2
+// @version      1.2.3
 // @description  add a lightbox gallery to torrent pages
 // @author       ephraim
 // @match        https://www.empornium.is/torrents.php?id=*
@@ -24,7 +24,7 @@ var descbox = document.querySelector('#descbox')
 var jerkingSrcQuery = `img[src*="jerking.empornium"]:not([src*=".th."], [src*=".md."], [src*="poster" i],
                       [src$=".png"],[src$="cast11.jpg"], [src$="plot11.jpg"], [src$="info11.jpg"], [src$="screens11.jpg"], [src$="finger-pointing-down.gif"])`
 var fappingSrcQuery = jerkingSrcQuery.replace('jerking', 'fapping')
-var hamsterSrcQuery = jerkingSrcQuery.replace('jerking.empornium', 'hamster.is')
+var hamsterSrcQuery = jerkingSrcQuery.replace('jerking.empornium', 'hamsterimg.net')
 var srcQuery = `${jerkingSrcQuery}, ${fappingSrcQuery}, ${hamsterSrcQuery}`
 var dataSrcQuery = srcQuery.replaceAll('[src', '[data-src')
 var fullsize = descbox.querySelectorAll(`${srcQuery}, ${dataSrcQuery}`)
@@ -54,7 +54,7 @@ document.querySelectorAll('a.lightbox-image + br').forEach(br => { br.remove() }
 //find links to fullsize images without thumbnails
 var fullsizeLinks = descbox.querySelectorAll('a[href*="jerking.empornium"]:not(:has(img)):not([href*="/album/"])',
   'a[href*="fapping.empornium"]:not(:has(img)):not([href*="/album/"])',
-  'a[href*="hamster.is"]:not(:has(img)):not([href*="/album/"])')
+  'a[href*="hamsterimg.net"]:not(:has(img)):not([href*="/album/"])')
 fullsizeLinks.forEach(f => {
   var th = document.createElement('img')
   th.className = 'bbcode scale_image'
@@ -76,7 +76,7 @@ fullsizeLinks.forEach(f => {
 //find thumbnails with links to fullsize
 var images = descbox.querySelectorAll(`a[href^="https://jerking.empornium"]:has(img[src*=".th."], img[src*=".md."], [src*="/thumb-"], img[data-src*=".th."], img[data-src*=".md."]),
                                        a[href^="https://fapping.empornium"]:has(img[src*=".th."], img[src*=".md."], [src*="/thumb-"], img[data-src*=".th."], img[data-src*=".md."]),
-                                       a[href^="https://hamster.is"]:has(img[src*=".th."], img[src*=".md."], [src*="/thumb-"], img[data-src*=".th."], img[data-src*=".md."]),
+                                       a[href^="https://hamsterimg.net"]:has(img[src*=".th."], img[src*=".md."], [src*="/thumb-"], img[data-src*=".th."], img[data-src*=".md."]),
                                        a.lightbox-image`)
 images.forEach(a => {
   var thumb = a.querySelector('img')
