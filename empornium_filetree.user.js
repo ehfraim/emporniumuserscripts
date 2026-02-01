@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         empornium better filelist
-// @version      3.6
+// @version      3.6.1
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
 // @namespace    empornium.sx
@@ -360,9 +360,12 @@ function expandAllFolders(e) {
 
 
 async function copyTopLevelName(e) {
-    var topLevelFolder = root.name;
-    var topLevelFile = root.files[0].name;
-    var topLevel = topLevelFolder.length > 1 ? topLevelFolder : topLevelFile;
+    var topLevel;
+    if (root.name.length > 1) {
+        topLevel = root.name;
+    } else {
+        topLevel = root.files[0].name;
+    }
     var btn = e.currentTarget;
     var originalText = btn.textContent;
     await navigator.clipboard.writeText(topLevel);
