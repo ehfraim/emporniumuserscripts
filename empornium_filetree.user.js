@@ -1,29 +1,28 @@
 // ==UserScript==
 // @name         empornium better filelist
-// @version      3.5
+// @version      3.6
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
-// @namespace    empornium
-// @match        https://www.empornium.sx/torrents.php?id=*
+// @namespace    empornium.sx
 // @match        https://www.emparadise.rs/torrents.php?id=*
-// @match        https://www.homeporntorrents.club/torrents.php?id=*
-// @match        https://femdomcult.org/torrents.php?id=*
-// @match        https://sextorrent.eu/torrents.php?id=*
-// @match        https://kufirc.com/torrents.php?id=*
-// @match        https://pornbay.org/torrents.php?id=*
+// @match        https://www.empornium.sx/torrents.php?id=*
+// @match        https://www.happyfappy.org/torrents.php?id=*
 // @grant        none
-// @downloadURL  https://update.sleazyfork.org/scripts/433858/empornium%20better%20filelist.user.js
-// @updateURL    https://update.sleazyfork.org/scripts/433858/empornium%20better%20filelist.user.js
+// @downloadURL https://update.sleazyfork.org/scripts/433858/empornium%20better%20filelist.user.js
+// @updateURL https://update.sleazyfork.org/scripts/433858/empornium%20better%20filelist.meta.js
 // ==/UserScript==
 
 
 var urlMap = {};
 
 const combinedPattern = new RegExp(
-    '(?:_?(?:thumb|screen|preview|s)s?)?\.(?:jpg|jpeg|bmp|png|gif|mp4|avi|m4v|mpg|mpeg|mkv|mov|wmv|flv|vob)', 'ig');
+    '(?:_?(?:thumbs?|screen|preview|s)s?)?\.(?:jpg|jpeg|bmp|png|gif)', 'ig');
+var videoSuffixPattern = new RegExp('\.(?:mp4|avi|m4v|mpg|mpeg|mkv|mov|wmv|flv|vob)');
 
 function nameHash(name) {
-    var hash = name.toLowerCase()
+    var hash = name.toLocaleLowerCase();
+    var match = videoSuffixPattern.exec(hash);
+    if (match) hash = hash.slice(0, match.index); // remove everything behind file ending
     hash = hash.replaceAll(combinedPattern, ''); //thumbs etc and file extensions
     hash = hash.replaceAll(/[\W_\[\]]/g, ''); // special characters
     return hash;
@@ -205,6 +204,7 @@ function createTree() {
     return treeContainer;
 }
 
+
 function clearFilter(e) {
     if (e.key != "Escape") return;
     e.target.value = '';
@@ -275,33 +275,12 @@ function wrapMatch(text, match) {
 }
 
 
-function expandAllFolders(e) {
-    e.preventDefault();
-    var closedFolders = document.querySelectorAll('.folder_closed');
-    var openFolders = [...document.querySelectorAll('.folder_open')].slice(1);
-    if (e.target.dataset.collapsed == 'collapsed') {
-        closedFolders.forEach(f => {
-            f.classList.add('folder_open');
-            f.classList.remove('folder_closed');
-        });
-        e.target.dataset.collapsed = 'expanded';
-        e.target.innerText = e.target.innerText.replace('📁Expand', '📂Collapse');
-    } else if (e.target.dataset.collapsed == 'expanded') {
-        openFolders.forEach(f => {
-            f.classList.add('folder_closed');
-            f.classList.remove('folder_open');
-        });
-        e.target.dataset.collapsed = 'collapsed';
-        e.target.innerText = e.target.innerText.replace('📂Collapse', '📁Expand');
-    }
-}
-
-
 function list2Tree() {
     var tabl = fileList.querySelector('table');
     var rows = [...tabl.rows];
 
     root.name = rows[0].innerText.trim();
+    if (root.name.length > 1) root.name = root.name.replace(/^\/|\/$/g, '')
     root.files = rows.slice(2).map(r => {
         var tdata = r.querySelectorAll('td');
         return {
@@ -327,10 +306,17 @@ function list2Tree() {
     headerFiles.dataset.type = 'header_files';
     headerSize.dataset.type = 'header_size';
     var tools = ce('span', 'header_tools');
-    var expand = ce('a', 'header_expand');
+
+
+    var copyTopLevel = ce('button', 'header_copy header_button');
+    copyTopLevel.textContent = '📋';
+    copyTopLevel.title = 'Copy top-level name to clipboard';
+    copyTopLevel.addEventListener('click', copyTopLevelName);
+
+    tools.append(copyTopLevel)
+    var expand = ce('button', 'header_expand header_button');
     var filterInput = ce('input', 'header_filter');
-    expand.text = '(📁Expand all)';
-    expand.href = '#';
+    expand.textContent = '📁↕';
     expand.title = 'Expand all folders';
     expand.dataset.collapsed = 'collapsed';
     filterInput.placeholder = '🔍Filter list';
@@ -349,6 +335,42 @@ function list2Tree() {
     var treeContainer = createTree();
     fileList.append(treeContainer);
     fileList.classList.remove('hidden');
+}
+
+
+function expandAllFolders(e) {
+    var closedFolders = document.querySelectorAll('.folder_closed');
+    var openFolders = [...document.querySelectorAll('.folder_open')].slice(1);
+    if (e.target.dataset.collapsed == 'collapsed') {
+        closedFolders.forEach(f => {
+            f.classList.add('folder_open');
+            f.classList.remove('folder_closed');
+        });
+        e.target.dataset.collapsed = 'expanded';
+        e.target.innerText = e.target.innerText.replace('📁Expand', '📂Collapse');
+    } else if (e.target.dataset.collapsed == 'expanded') {
+        openFolders.forEach(f => {
+            f.classList.add('folder_closed');
+            f.classList.remove('folder_open');
+        });
+        e.target.dataset.collapsed = 'collapsed';
+        e.target.innerText = e.target.innerText.replace('📂Collapse', '📁Expand');
+    }
+}
+
+
+async function copyTopLevelName(e) {
+    var topLevelFolder = root.name;
+    var topLevelFile = root.files[0].name;
+    var topLevel = topLevelFolder.length > 1 ? topLevelFolder : topLevelFile;
+    var btn = e.currentTarget;
+    var originalText = btn.textContent;
+    await navigator.clipboard.writeText(topLevel);
+    btn.textContent = '✅';
+
+    setTimeout(() => {
+        btn.textContent = originalText;
+    }, 2000);
 }
 
 
@@ -528,9 +550,6 @@ treeStyle.innerHTML = `
     margin-left: 0.3em;
     font-size: 10pt;
 }
-.header_item {
-    cursor: pointer;
-}
 .header_left {
     display: flex;
     justify-content: start;
@@ -548,13 +567,21 @@ treeStyle.innerHTML = `
     flex: 3;
     justify-content: center;
 }
-.header_expand {
+.header_button {
+    all: unset;
+    cursor: pointer;
     margin-right: 1em;
-    font-weight: normal;
-    font-size: 10pt;
-    flex: 1;
-    min-width: 8em;
-    max-width: 9em;
+
+    &:hover {
+        background: unset;
+        color: unset;
+        filter: drop-shadow(2px 3px 3px rgba(0, 0, 0, 0.37));
+        transform: scale(1.15);
+    }
+    &:active {
+        border-style: unset;
+        transform:scale(0.9);
+    }
 }
 .header_filter {
     border: none;
@@ -564,6 +591,9 @@ treeStyle.innerHTML = `
     max-width: 20em;
     padding: 4px;
     flex: 3;
+}
+.header_item {
+    cursor: pointer;
 }
 .file_list {
     padding-left: 0.5em;
