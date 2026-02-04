@@ -7,11 +7,14 @@
 // @match          https://www.empornium.sx/torrents.php*
 // @match          https://www.empornium.sx/user.php*
 // @exclude        https://www.empornium.sx/torrents.php?action=notify
-// @exclude        https://www\empornium.sx/torrents.php?id=
+// @exclude        https://www.empornium.sx/torrents.php?id=
 // @match          https://www.emparadise.rs/torrents.php*
 // @match          https://www.emparadise.rs/user.php*
 // @exclude        https://www.emparadise.rs/torrents.php?action=notify
 // @exclude        https://www.emparadise.rs/torrents.php?id=
+// @match          https://www.happyfappy.org/torrents.php?*
+// @exclude        https://www.happyfappy.org/torrents.php?action=notify
+// @exclude        https://www.happyfappy.org/torrents.php?id=
 // @grant          none
 // @downloadURL https://update.greasyfork.org/scripts/441810/Empornium%20coalesce%20variations.user.js
 // @updateURL https://update.greasyfork.org/scripts/441810/Empornium%20coalesce%20variations.meta.js
