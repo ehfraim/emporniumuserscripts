@@ -10,6 +10,7 @@
 // @exclude        https://www.empornium.sx/torrents.php?id=
 // @match          https://www.emparadise.rs/torrents.php*
 // @match          https://www.emparadise.rs/user.php*
+// @match          https://www.happyfappy.org/torrents.php?*
 // @exclude        https://www.emparadise.rs/torrents.php?action=notify
 // @exclude        https://www.emparadise.rs/torrents.php?id=
 // @match          https://www.happyfappy.org/torrents.php?*
