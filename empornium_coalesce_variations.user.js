@@ -2,7 +2,7 @@
 // @name           Empornium coalesce variations
 // @author         ephraim
 // @namespace      empornium.sx
-// @version        7.6
+// @version        7.6.1
 // @description    Combines torrents of different variations to one row
 // @match          https://www.empornium.sx/torrents.php*
 // @match          https://www.empornium.sx/user.php*
@@ -30,7 +30,7 @@ const variationRegexes = [
   // framerate
   //\d+(?:\.\d+)?\s?fps/ig,
   // encoding
-  /h\.?265|x\.?265|hevc|hvec|avc|h\.?264|x\.?264|SVT-AV1|AV1|reencoded|rencoded|reencode|re-encode|lower bitrate|lq|hq|original|10bit/ig,
+  /h\.?265|x\.?265|hevc|hvec|avc|h\.?264|x\.?264|SVT-AV1|AV1|reencoded|rencoded|reencode|re-encode|lower bitrate|lq|hq|original|10bit|better quality/ig,
   // filetype
   /mpeg4|3gp|mp4|wmv|mkv|blu-ray/ig,
   // reported torrents
@@ -101,9 +101,6 @@ function combineTorrents(multiTorrent) {
     tcells[8].appendChild(makeList(mt.leechers));
     if (isUnique(mt.uploaders)) mt.uploaders = mt.uploaders.slice(0, 1);
     tcells[9].appendChild(makeList(mt.uploaders));
-    tcells[2].className = 'center';
-    tcells[3].className = 'center';
-    tcells[9].classList.add('user');
     for (const seed of tcells[7].querySelectorAll('li')) {
       if (seed.textContent === '0') seed.classList.add('r00');
     }
