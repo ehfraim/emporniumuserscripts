@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         empornium better filelist
-// @version      3.6.1
+// @version      3.6.2
 // @description  Shows filelist as expandable tree structure
 // @author       ephraim
 // @namespace    empornium.sx
-// @match        https://www.emparadise.rs/torrents.php?id=*
+// @match        https://emparadise.rs/torrents.php?id=*
 // @match        https://www.empornium.sx/torrents.php?id=*
 // @match        https://www.happyfappy.org/torrents.php?id=*
 // @grant        none
